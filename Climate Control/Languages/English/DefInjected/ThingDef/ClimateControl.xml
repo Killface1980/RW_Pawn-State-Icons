@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<LanguageData>
-  
-	<ClimateControl.label>Climate Control</ClimateControl.label>
-	<ClimateControl.description>Climate control system. Sets the minimum and maximum comfortable temperature and keeps it.</ClimateControl.description>
-	
-</LanguageData>

@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<LanguageData>
-  
-	<ClimateControl.label>Климат Контроль</ClimateControl.label>
-	<ClimateControl.description>Система климат контроля. Устанавливает минимальную и максимальную комфортную температуру и удерживает ее.</ClimateControl.description>
-	
-</LanguageData>
