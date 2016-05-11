@@ -23,7 +23,7 @@ namespace PSI
         private static bool _iconsEnabled = true;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private static Dialog_Settings _modSettingsDialog = new Dialog_Settings();
+        private static Dialog_Settings _settingsDialog = new Dialog_Settings();
 
         public static ModSettings Settings = new ModSettings();
 
@@ -334,33 +334,32 @@ namespace PSI
         private static void UpdateOptionsDialog()
         {
             var dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
-            var flag1 = dialogOptions != null;
-            var flag2 = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
-
-            if (flag1 && flag2)
+            var isDialog = dialogOptions != null;
+            var isOpen = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
+                        if (isDialog && isOpen)
             {
-                _modSettingsDialog.OptionsDialog = dialogOptions;
+                _settingsDialog.OptionsDialog = dialogOptions;
                 RecalcIconPositions();
             }
-            else if (flag1 && !flag2)
+            else if (isDialog && !isOpen)
             {
-                if (!_modSettingsDialog.CloseButtonClicked)
+                if (!_settingsDialog.CloseButtonClicked)
                 {
-                    Find.UIRoot.windows.Add(_modSettingsDialog);
-                    _modSettingsDialog.Page = "main";
+                    Find.UIRoot.windows.Add(_settingsDialog);
+                    _settingsDialog.Page = "main";
                 }
                 else
                     dialogOptions.Close();
             }
-            else if (!flag1 && flag2)
+            else if (!isDialog && isOpen)
             {
-                _modSettingsDialog.Close(false);
+                _settingsDialog.Close(false);
             }
             else
             {
-                if (flag1 || flag2)
+                if (isDialog || isOpen)
                     return;
-                _modSettingsDialog.CloseButtonClicked = false;
+                _settingsDialog.CloseButtonClicked = false;
             }
         }
 
