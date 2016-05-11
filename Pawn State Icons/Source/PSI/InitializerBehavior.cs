@@ -25,7 +25,7 @@ namespace PSI
             _reinjectNeeded = false;
             _reinjectTime = 0.0f;
             _psiObject = GameObject.Find("PSIMain") ?? new GameObject("PSIMain");
-            _psiObject.AddComponent<Psi>();
+            _psiObject.AddComponent<PSI>();
             Log.Message("PSI Injected!!");
         }
 

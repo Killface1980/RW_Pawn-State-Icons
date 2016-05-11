@@ -2,51 +2,51 @@
 {
     internal class ModSettings
     {
-        public float iconSize = 1f;
-        public float iconSizeMult = 1f;
-        public float iconDistanceX = 1f;
-        public float iconDistanceY = 1f;
-        public float iconOffsetX = 1f;
-        public float iconOffsetY = 1f;
+        public float IconSize = 1f;
+        public float IconSizeMult = 1f;
+        public float IconDistanceX = 1f;
+        public float IconDistanceY = 1f;
+        public float IconOffsetX = 1f;
+        public float IconOffsetY = 1f;
 
-        public int iconsInColumn = 3;
-        public bool iconsHorizontal;
-        public bool iconsScreenScale = true;
-        public string iconSet = "default";
+        public int IconsInColumn = 3;
+        public bool IconsHorizontal;
+        public bool IconsScreenScale = true;
+        public string IconSet = "default";
 
-        public bool show_TargetPoint = true;
-        public bool show_Aggressive = true;
-        public bool show_Dazed = true;
-        public bool show_Leave = true;
-        public bool show_Draft = true;
-        public bool show_Idle = true;
-        public bool show_Unarmed = true;
-        public bool show_Hungry = true;
-        public bool show_Sad = true;
-        public bool show_Tired = true;
-        public bool show_Disease = true;
-        public bool show_Effectiveness = true;
-        public bool show_Bloodloss = true;
-        public bool show_Hot = true;
-        public bool show_Cold = true;
-        public bool show_Naked = true;
-        public bool show_Drunk = true;
-        public bool show_ApparelHealth = true;
-        public bool show_Pacific = true;
-        public bool show_Prosthophile = true;
-        public bool show_Prosthophobe = true;
-        public bool show_NightOwl = true;
-        public bool show_Greedy = true;
-        public bool show_Jealous = true;
-        public bool show_Lovers = true;
+        public bool ShowTargetPoint = true;
+        public bool ShowAggressive = true;
+        public bool ShowDazed = true;
+        public bool ShowLeave = true;
+        public bool ShowDraft = true;
+        public bool ShowIdle = true;
+        public bool ShowUnarmed = true;
+        public bool ShowHungry = true;
+        public bool ShowSad = true;
+        public bool ShowTired = true;
+        public bool ShowDisease = true;
+        public bool ShowEffectiveness = true;
+        public bool ShowBloodloss = true;
+        public bool ShowHot = true;
+        public bool ShowCold = true;
+        public bool ShowNaked = true;
+        public bool ShowDrunk = true;
+        public bool ShowApparelHealth = true;
+        public bool ShowPacific = true;
+        public bool ShowProsthophile = true;
+        public bool ShowProsthophobe = true;
+        public bool ShowNightOwl = true;
+        public bool ShowGreedy = true;
+        public bool ShowJealous = true;
+        public bool ShowLovers = true;
 
-        public float limit_MoodLess = 0.25f;
-        public float limit_FoodLess = 0.25f;
-        public float limit_RestLess = 0.25f;
-        public float limit_EfficiencyLess = 0.33f;
-        public float limit_DiseaseLess = 1f;
-        public float limit_BleedMult = 3f;
-        public float limit_ApparelHealthLess = 0.33f;
-        public float limit_TempComfortOffset;
+        public float LimitMoodLess = 0.25f;
+        public float LimitFoodLess = 0.25f;
+        public float LimitRestLess = 0.25f;
+        public float LimitEfficiencyLess = 0.33f;
+        public float LimitDiseaseLess = 1f;
+        public float LimitBleedMult = 3f;
+        public float LimitApparelHealthLess = 0.33f;
+        public float LimitTempComfortOffset;
     }
 }
