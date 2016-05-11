@@ -510,9 +510,15 @@ namespace PSI
 
             // Target Point 
             if (!Settings.ShowTargetPoint || !(pawnStats.TargetPos != Vector3.zero))
-                return;
+                DrawIcon(pawnStats.TargetPos, Vector3.zero, Icons.Target, TargetColor);
 
-            // Traiits and bad thoughts
+            // Traits and bad thoughts
+
+            // Room Status
+            if (Settings.ShowRoomStatus && HasMood(colonist, ThoughtDef.Named("Crowded")))
+            {
+                DrawIcon(drawPos, num1++, Icons.Crowded, Color.white);
+            }
 
             if (Settings.ShowProsthophile && HasMood(colonist, ThoughtDef.Named("ProsthophileNoProsthetic")))
             {
@@ -548,11 +554,201 @@ namespace PSI
             {
                 DrawIcon(drawPos, num1++, Icons.Naked, Color.white);
             }
-            DrawIcon(pawnStats.TargetPos, Vector3.zero, Icons.Target, TargetColor);
-        }
 
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once UnusedMember.Global
+            if (Settings.ShowLeftUnburied && HasMood(colonist, ThoughtDef.Named("ColonistLeftUnburied")))
+            {
+                DrawIcon(drawPos, num1++, Icons.LeftUnburied, Color.white);
+            }
+
+            if (Settings.ShowDeadColonists)
+            {
+
+                Color color25To21 = Color.red;
+
+                Color color20To16 = new Color(1f, 0.5f, 0f);
+
+                Color color15To11 = Color.yellow;
+
+                Color color10 = new Color(1f, 1f, 0.5f);
+
+                Color color9AndLess = Color.white;
+
+                Color colorMoodBoost = Color.green;
+
+                // Close Family & friends / 25
+
+
+
+                if (HasMood(colonist, ThoughtDef.Named("MySonDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color25To21);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyDaughterDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color25To21);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyFianceDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color25To21);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyFianceeDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color25To21);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyLoverDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color25To21);
+                }
+
+                // 20
+
+                if (HasMood(colonist, ThoughtDef.Named("MyHusbandDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color20To16);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyWifeDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color20To16);
+                }
+
+                //
+
+                //
+                //friend depends on social
+                if (HasMood(colonist, ThoughtDef.Named("PawnWithGoodOpinionDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                // Notsoclose family / 15
+
+                if (HasMood(colonist, ThoughtDef.Named("MyBrotherDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color15To11);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MySisterDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color15To11);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyGrandchildDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color15To11);
+                }
+
+                // 10
+
+                if (HasMood(colonist, ThoughtDef.Named("MyFatherDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyMotherDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyNieceDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyNephewDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyAuntDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyUncleDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                }
+
+                //
+
+
+                if (HasMood(colonist, ThoughtDef.Named("BondedAnimalDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color15To11);
+                }
+
+                // not family, more whiter icon
+                if (HasMood(colonist, ThoughtDef.Named("KilledColonist")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("KilledColonyAnimal")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+
+                //Everyone else / < 10
+                if (HasMood(colonist, ThoughtDef.Named("MyGrandparentDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("MyHalfSiblingDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyCousinDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("MyKinDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("MyGrandparentDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                }
+
+                //non family
+                //if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathAlly")))
+                //{
+                //    DrawIcon(drawPos, num1++, Icons.DeadColonist, color_9andLess);
+                //}
+                //if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStranger")))
+                //{
+                //    DrawIcon(drawPos, num1++, Icons.DeadColonist, color_9andLess);
+                //}
+
+                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStrangerBloodlust")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, colorMoodBoost);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("KilledHumanlikeBloodlust")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, colorMoodBoost);
+                }
+
+                //Haters
+                if (HasMood(colonist, ThoughtDef.Named("PawnWithBadOpinionDied")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, colorMoodBoost);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, colorMoodBoost);
+                }
+            }
+            return;
+
+        }
 
         public virtual void OnGUI()
         {
@@ -569,8 +765,6 @@ namespace PSI
                     DrawColonistIcons(pawn);
             }
         }
-
-        // ReSharper disable once UnusedMember.Global
 
         public virtual void Update()
         {

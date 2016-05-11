@@ -39,6 +39,10 @@
         public bool ShowGreedy = true;
         public bool ShowJealous = true;
         public bool ShowLovers = true;
+        public bool ShowDeadColonists = true;
+        public bool ShowLeftUnburied = true;
+        public bool ShowRoomStatus = true;
+
 
         public float LimitMoodLess = 0.25f;
         public float LimitFoodLess = 0.25f;
