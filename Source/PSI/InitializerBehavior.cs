@@ -3,7 +3,6 @@ using Verse;
 
 namespace PSI
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
     internal class InitializerBehavior : MonoBehaviour
     {
         private GameObject _psiObject;
