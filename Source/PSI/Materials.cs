@@ -44,7 +44,6 @@ namespace PSI
 
     internal class Materials
     {
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private Material[] _data = new Material[40];
         private readonly string _matLibName;
 

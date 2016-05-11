@@ -9,20 +9,17 @@ using Verse.AI;
 
 namespace PSI
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    // ReSharper disable once InconsistentNaming
+
     internal class PSI : MonoBehaviour
     {
         private static double fDelta;
 
         private static bool inGame;
 
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private static Dictionary<Pawn, PawnStats> _statsDict = new Dictionary<Pawn, PawnStats>();
 
         private static bool _iconsEnabled = true;
 
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private static Dialog_Settings modSettingsDialog = new Dialog_Settings();
 
         public static ModSettings settings = new ModSettings();
@@ -302,9 +299,6 @@ namespace PSI
                 return false;
             }
         }
-
-
-        // ReSharper disable once UnusedMember.Global
 
         public virtual void FixedUpdate()
         {
@@ -753,9 +747,6 @@ namespace PSI
 
         }
 
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once UnusedMember.Global
-
         public virtual void OnGUI()
         {
             if (!inGame || Find.TickManager.Paused)
@@ -771,8 +762,6 @@ namespace PSI
                     DrawColonistIcons(pawn);
             }
         }
-
-        // ReSharper disable once UnusedMember.Global
 
         public virtual void Update()
         {

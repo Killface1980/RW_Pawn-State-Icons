@@ -6,7 +6,6 @@ using Verse;
 
 namespace PSI
 {
-    // ReSharper disable once InconsistentNaming
     internal class Dialog_Settings : Window
     {
         public string Page = "main";

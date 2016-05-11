@@ -4,7 +4,6 @@ using Object = UnityEngine.Object;
 
 namespace PSI
 {
-    // ReSharper disable once UnusedMember.Global
     internal class Initializer : ITab
     {
         public Initializer()
