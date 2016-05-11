@@ -10,7 +10,7 @@ namespace PSI
 
         public float PawnTooHot = -1f;
 
-        public float PawnBleedRate = -1f;
+        public float BleedRate = -1f;
 
         public float PawnPainRate = -1f;
 
@@ -18,7 +18,7 @@ namespace PSI
 
         public float DiseaseDisappearance = 1f;
 
-        public float PawnApparelHealth = 1f;
+        public float ApparelHealth = 1f;
 
         public float PawnDrunkness;
     }
