@@ -44,7 +44,7 @@ namespace PSI
 
     internal class Materials
     {
-        private Material[] _data = new Material[40];
+        private readonly Material[] _data = new Material[40];
         private readonly string _matLibName;
 
         public Material this[Icons icon] => _data[(int)icon];

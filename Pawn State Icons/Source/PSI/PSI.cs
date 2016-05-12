@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -39,7 +40,6 @@ namespace PSI
 
         private static Vector3[] _iconPosVectors;
 
-
         public PSI()
         {
             Reinit();
@@ -47,7 +47,7 @@ namespace PSI
 
         public static void Reinit(bool reloadSettings = true, bool reloadIconSet = true, bool recalcIconPos = true)
         {
-            PSI._pawnCapacities = new PawnCapacityDef[]
+            _pawnCapacities = new[]
             {
                 PawnCapacityDefOf.BloodFiltration,
                 PawnCapacityDefOf.BloodPumping,
@@ -64,31 +64,31 @@ namespace PSI
 
             if (reloadSettings)
             {
-                PSI.Settings = PSI.LoadSettings("psi-settings.cfg");
+                Settings = LoadSettings();
             }
             if (reloadIconSet)
             {
-                PSI.Materials = new Materials(PSI.Settings.IconSet);
-                ModSettings modSettings = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/" + PSI.Settings.IconSet + "/iconset.cfg", true);
-                PSI.Settings.IconSizeMult = modSettings.IconSizeMult;
-                PSI.Materials.ReloadTextures(true);
+                Materials = new Materials(Settings.IconSet);
+                ModSettings modSettings = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                Settings.IconSizeMult = modSettings.IconSizeMult;
+                Materials.ReloadTextures(true);
             }
             if (recalcIconPos)
             {
-                PSI.RecalcIconPositions();
+                RecalcIconPositions();
             }
         }
 
         public static ModSettings LoadSettings(string path = "psi-settings.cfg")
         {
-            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(path, true);
+            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(path);
             string path2 = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/";
             if (Directory.Exists(path2))
             {
-                PSI.IconSets = Directory.GetDirectories(path2);
-                for (int i = 0; i < PSI.IconSets.Length; i++)
+                IconSets = Directory.GetDirectories(path2);
+                for (int i = 0; i < IconSets.Length; i++)
                 {
-                    PSI.IconSets[i] = new DirectoryInfo(PSI.IconSets[i]).Name;
+                    IconSets[i] = new DirectoryInfo(IconSets[i]).Name;
                 }
             }
             return result;
@@ -96,7 +96,7 @@ namespace PSI
 
         public static void SaveSettings(string path = "psi-settings.cfg")
         {
-            XmlSaver.SaveDataObject(PSI.Settings, path);
+            XmlSaver.SaveDataObject(Settings, path);
         }
 
         #region Draw icons
@@ -208,9 +208,10 @@ namespace PSI
                 if (jobDriver is JobDriver_HaulToContainer || jobDriver is JobDriver_HaulToCell || (jobDriver is JobDriver_FoodDeliver || jobDriver is JobDriver_FoodFeedPatient) || jobDriver is JobDriver_TakeToBed)
                     targetInfo = job.targetB;
 
-                if (jobDriver is JobDriver_DoBill)
+                var bill = jobDriver as JobDriver_DoBill;
+                if (bill != null)
                 {
-                    var jobDriverDoBill = (JobDriver_DoBill)jobDriver;
+                    var jobDriverDoBill = bill;
                     if (jobDriverDoBill.workLeft == 0.0)
                         targetInfo = job.targetA;
                     else if (jobDriverDoBill.workLeft <= 0.00999999977648258)
@@ -265,8 +266,7 @@ namespace PSI
                 var hediffWithComps = (HediffWithComps)hediff;
                 if (hediffWithComps != null
                     && !hediffWithComps.FullyImmune()
-                    && (hediffWithComps.Visible
-                    && !hediffWithComps.IsOld())
+                    && (hediffWithComps.Visible && !hediffWithComps.IsOld())
                     && ((hediffWithComps.CurStage == null || hediffWithComps.CurStage.everVisible) && (hediffWithComps.def.tendable || hediffWithComps.def.naturallyHealed))
                     && hediffWithComps.def.PossibleToDevelopImmunity())
 
@@ -320,14 +320,15 @@ namespace PSI
 
             foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisoners)
             {
-                try
-                {
-                    UpdateColonistStats(colonist);
-                }
-                catch (Exception ex)
-                {
-                    Log.Notify_Exception(ex);
-                }
+                UpdateColonistStats(colonist);
+                //try
+                //{
+                //    UpdateColonistStats(colonist);
+                //}
+                //catch (Exception ex)
+                //{
+                //    Log.Notify_Exception(ex);
+                //}
             }
         }
 
@@ -336,7 +337,7 @@ namespace PSI
             var dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
             var isDialog = dialogOptions != null;
             var isOpen = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
-                        if (isDialog && isOpen)
+            if (isDialog && isOpen)
             {
                 _settingsDialog.OptionsDialog = dialogOptions;
                 RecalcIconPositions();
@@ -516,7 +517,29 @@ namespace PSI
             // Room Status
             if (Settings.ShowRoomStatus && HasMood(colonist, ThoughtDef.Named("Crowded")))
             {
-                DrawIcon(drawPos, num1++, Icons.Crowded, Color.white);
+
+                {
+                    foreach (var thoughtDef in colonist.needs.mood.thoughts.Thoughts.ToArray())
+                    {
+                        if (thoughtDef.def.defName.Equals("Crowded"))
+                        {
+                            var thoughtStage = thoughtDef.CurStage;
+                            if (thoughtStage.baseMoodEffect == -20f)
+                                DrawIcon(drawPos, num1++, Icons.Crowded, Color.red);
+                            if (thoughtStage.baseMoodEffect == -12f)
+                                DrawIcon(drawPos, num1++, Icons.Crowded, Color.yellow);
+                            if (thoughtStage.baseMoodEffect == -5f)
+                                DrawIcon(drawPos, num1++, Icons.Crowded, Color.white);
+
+                        }
+
+
+
+                    }
+
+
+                }
+                //   DrawIcon(drawPos, num1++, Icons.Crowded, Color.white);
             }
 
             if (Settings.ShowProsthophile && HasMood(colonist, ThoughtDef.Named("ProsthophileNoProsthetic")))
@@ -749,6 +772,7 @@ namespace PSI
 
         }
 
+        // ReSharper disable once InconsistentNaming
         public virtual void OnGUI()
         {
             if (!_inGame || Find.TickManager.Paused)
