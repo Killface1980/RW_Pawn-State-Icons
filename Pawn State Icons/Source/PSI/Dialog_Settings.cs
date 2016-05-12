@@ -74,6 +74,9 @@ namespace PSI
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
+            listing.DoLabel("PSI.Settings.IconTransparancy".Translate());
+            PSI.Settings.IconTransparancy = listing.DoSlider(PSI.Settings.IconTransparancy, 0.2f, 1f);
+
             listing.DoGap();
 
             DoHeading(listing, "PSI.Settings.Advanced");
@@ -182,6 +185,7 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
 
+            // to do: sort, cleanup + translation
 
             listing.OverrideColumnWidth = 230f;
             if (listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
@@ -227,6 +231,7 @@ namespace PSI
                             PSI.Settings.IconsScreenScale = settings.IconsScreenScale;
                             PSI.Settings.IconsInColumn = settings.IconsInColumn;
                             PSI.Settings.IconSize = settings.IconSize;
+                            PSI.Settings.IconTransparancy= settings.IconTransparancy;
                         }
                         catch (IOException)
                         {

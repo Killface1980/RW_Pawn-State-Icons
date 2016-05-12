@@ -1,6 +1,6 @@
 ﻿namespace PSI
 {
-    internal class ModSettings
+    public class ModSettings
     {
         public float IconSize = 1f;
         public float IconSizeMult = 1f;
@@ -45,7 +45,6 @@
         public bool ShowPain = true;
         public bool ShowBedroom = true;
 
-
         public float LimitMoodLess = 0.25f;
         public float LimitFoodLess = 0.25f;
         public float LimitRestLess = 0.25f;
@@ -54,5 +53,7 @@
         public float LimitBleedMult = 3f;
         public float LimitApparelHealthLess = 0.33f;
         public float LimitTempComfortOffset;
+        public float IconTransparancy = 1f;
+
     }
 }

@@ -3,6 +3,7 @@
   <PSI.Enabled>Pawn State Icons enabled</PSI.Enabled>
   <PSI.Disabled>Pawn State Icons disabled. Press F11 to reenable</PSI.Disabled>
   <PSI.Settings.IconSet>Icon set: </PSI.Settings.IconSet>
+  <PSI.Settings.IconTransparancy>Transparancy</PSI.Settings.IconTransparancy>
   <PSI.Settings.Advanced>Advanced</PSI.Settings.Advanced>
   <PSI.Settings.VisibilityButton>Visibility...</PSI.Settings.VisibilityButton>
   <PSI.Settings.ArrangementButton>Size and arrangement...</PSI.Settings.ArrangementButton>

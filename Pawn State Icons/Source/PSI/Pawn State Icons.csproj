@@ -35,6 +35,10 @@
       <HintPath>Import DLL\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Community Core Library">
+      <HintPath>..\..\..\Community Core Library\Assemblies\Community Core Library.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CCL_Dialog_Settings.cs" />
     <Compile Include="Dialog_Settings.cs" />
     <Compile Include="Materials.cs" />
     <Compile Include="PawnStats.cs" />
