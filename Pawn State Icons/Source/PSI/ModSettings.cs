@@ -42,6 +42,8 @@
         public bool ShowDeadColonists = true;
         public bool ShowLeftUnburied = true;
         public bool ShowRoomStatus = true;
+        public bool ShowPain = true;
+        public bool ShowBedroom = true;
 
 
         public float LimitMoodLess = 0.25f;

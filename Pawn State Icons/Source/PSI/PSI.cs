@@ -178,21 +178,26 @@ namespace PSI
         {
 
             if (!_statsDict.ContainsKey(colonist))
+            {
                 _statsDict.Add(colonist, new PawnStats());
+            }
 
-            var pawnStats = _statsDict[colonist];
+            PawnStats pawnStats = _statsDict[colonist];
+
 
             // efficiency
             float efficiency = 10f;
 
-            foreach (var activity in _pawnCapacities)
+            var array = _pawnCapacities;
+            foreach (PawnCapacityDef pawnCapacityDef in array)
             {
-                if (activity != PawnCapacityDefOf.Consciousness)
-                    efficiency = Math.Min(efficiency, colonist.health.capacities.GetEfficiency(activity));
+                if (pawnCapacityDef != PawnCapacityDefOf.Consciousness)
+                {
+                    efficiency = Math.Min(efficiency, colonist.health.capacities.GetEfficiency(pawnCapacityDef));
+                }
+                if (efficiency < 0f)
+                    efficiency = 0f;
             }
-
-            if (efficiency < 0.0)
-                efficiency = 0.0f;
 
             pawnStats.TotalEfficiency = efficiency;
 
@@ -201,94 +206,120 @@ namespace PSI
 
             if (colonist.jobs.curJob != null)
             {
-                var jobDriver = colonist.jobs.curDriver;
-                var job = colonist.jobs.curJob;
-                var targetInfo = job.targetA;
-
-                if (jobDriver is JobDriver_HaulToContainer || jobDriver is JobDriver_HaulToCell || (jobDriver is JobDriver_FoodDeliver || jobDriver is JobDriver_FoodFeedPatient) || jobDriver is JobDriver_TakeToBed)
-                    targetInfo = job.targetB;
-
-                var bill = jobDriver as JobDriver_DoBill;
-                if (bill != null)
+                JobDriver curDriver = colonist.jobs.curDriver;
+                Job curJob = colonist.jobs.curJob;
+                TargetInfo targetInfo = curJob.targetA;
+                if (curDriver is JobDriver_HaulToContainer || curDriver is JobDriver_HaulToCell || curDriver is JobDriver_FoodDeliver || curDriver is JobDriver_FoodFeedPatient || curDriver is JobDriver_TakeToBed)
                 {
-                    var jobDriverDoBill = bill;
-                    if (jobDriverDoBill.workLeft == 0.0)
-                        targetInfo = job.targetA;
-                    else if (jobDriverDoBill.workLeft <= 0.00999999977648258)
-                        targetInfo = job.targetB;
+                    targetInfo = curJob.targetB;
                 }
-
-                if (jobDriver is JobDriver_Hunt && colonist.carrier?.CarriedThing != null)
-                    targetInfo = job.targetB;
-
-                if (job.def == JobDefOf.Wait)
+                if (curDriver is JobDriver_DoBill)
+                {
+                    JobDriver_DoBill jobDriver_DoBill = (JobDriver_DoBill)curDriver;
+                    if (jobDriver_DoBill.workLeft == 0f)
+                    {
+                        targetInfo = curJob.targetA;
+                    }
+                    else if (jobDriver_DoBill.workLeft <= 0.01f)
+                    {
+                        targetInfo = curJob.targetB;
+                    }
+                }
+                if (curDriver is JobDriver_Hunt && colonist.carrier != null && colonist.carrier.CarriedThing != null)
+                {
+                    targetInfo = curJob.targetB;
+                }
+                if (curJob.def == JobDefOf.Wait)
+                {
                     targetInfo = null;
-
-                if (jobDriver is JobDriver_Ingest)
+                }
+                if (curDriver is JobDriver_Ingest)
+                {
                     targetInfo = null;
-
-                if (job.def == JobDefOf.LayDown && colonist.InBed())
+                }
+                if (curJob.def == JobDefOf.LayDown && colonist.InBed())
+                {
                     targetInfo = null;
-
-                if (!job.playerForced && job.def == JobDefOf.Goto)
+                }
+                if (!curJob.playerForced && curJob.def == JobDefOf.Goto)
+                {
                     targetInfo = null;
-
+                }
                 bool flag;
                 if (targetInfo != null)
                 {
-                    var cell = targetInfo.Cell;
+                    IntVec3 arg_242_0 = targetInfo.Cell;
                     flag = false;
                 }
                 else
+                {
                     flag = true;
+                }
                 if (!flag)
                 {
-                    var vector3 = targetInfo.Cell.ToVector3Shifted();
-                    pawnStats.TargetPos = vector3 + new Vector3(0.0f, 3f, 0.0f);
+                    Vector3 a = targetInfo.Cell.ToVector3Shifted();
+                    pawnStats.TargetPos = a + new Vector3(0f, 3f, 0f);
                 }
             }
 
             // temperature
             var temperatureForCell = GenTemperature.GetTemperatureForCell(colonist.Position);
-            pawnStats.TooCold = (float)((colonist.ComfortableTemperatureRange().min - (double)Settings.LimitTempComfortOffset - temperatureForCell) / 10.0);
-            pawnStats.TooHot = (float)((temperatureForCell - (double)colonist.ComfortableTemperatureRange().max - Settings.LimitTempComfortOffset) / 10.0);
-            pawnStats.TooCold = Mathf.Clamp(pawnStats.TooCold, 0.0f, 2f);
-            pawnStats.TooHot = Mathf.Clamp(pawnStats.TooHot, 0.0f, 2f);
+            pawnStats.TooCold = (float)((colonist.ComfortableTemperatureRange().min - (double)Settings.LimitTempComfortOffset - temperatureForCell) / 10f);
+            pawnStats.TooHot = (float)((temperatureForCell - (double)colonist.ComfortableTemperatureRange().max - Settings.LimitTempComfortOffset) / 10f);
+            pawnStats.TooCold = Mathf.Clamp(pawnStats.TooCold, 0f, 2f);
+            pawnStats.TooHot = Mathf.Clamp(pawnStats.TooHot, 0f, 2f);
 
+            // Drunkness
+            pawnStats.Drunkness = DrugUtility.DrunknessPercent(colonist);
 
             // Health Calc
             pawnStats.DiseaseDisappearance = 1f;
-            pawnStats.Drunkness = DrugUtility.DrunknessPercent(colonist);
-
 
             foreach (var hediff in colonist.health.hediffSet.hediffs)
             {
                 var hediffWithComps = (HediffWithComps)hediff;
                 if (hediffWithComps != null
                     && !hediffWithComps.FullyImmune()
-                    && (hediffWithComps.Visible && !hediffWithComps.IsOld())
-                    && ((hediffWithComps.CurStage == null || hediffWithComps.CurStage.everVisible) && (hediffWithComps.def.tendable || hediffWithComps.def.naturallyHealed))
+                    && hediffWithComps.Visible
+                    && !hediffWithComps.IsOld()
+       //             && ((hediffWithComps.CurStage == null || hediffWithComps.CurStage.everVisible) && (hediffWithComps.def.tendable || hediffWithComps.def.naturallyHealed))
                     && hediffWithComps.def.PossibleToDevelopImmunity())
 
                     pawnStats.DiseaseDisappearance = Math.Min(pawnStats.DiseaseDisappearance, colonist.health.immunity.GetImmunity(hediffWithComps.def));
             }
 
             // Apparel Calc
-            var num1 = 999f;
-            var wornApparel = colonist.apparel.WornApparel;
-            foreach (var apparel in wornApparel)
+            float num2 = 999f;
+            List<Apparel> wornApparel = colonist.apparel.WornApparel;
+            for (int j = 0; j < wornApparel.Count; j++)
             {
-                var num2 = apparel.HitPoints / (float)apparel.MaxHitPoints;
-                if (num2 >= 0.0 && num2 < (double)num1)
-                    num1 = num2;
+                float HitpointsPercent = (float)wornApparel[j].HitPoints / (float)wornApparel[j].MaxHitPoints;
+                if (HitpointsPercent >= 0f && HitpointsPercent < num2)
+                {
+                    num2 = HitpointsPercent;
+                }
             }
+            pawnStats.ApparelHealth = num2;
 
-            pawnStats.ApparelHealth = num1;
+            // Bleed rate
 
             pawnStats.BleedRate = Mathf.Clamp01(colonist.health.hediffSet.BleedingRate * Settings.LimitBleedMult);
 
+            // Bed status
+            if (colonist.ownership.OwnedBed != null)
+                //    if (colonist.ownership.OwnedBed.SleepingSlotsCount >= 1)
+                pawnStats.HasBed = true;
+            if (colonist.ownership.OwnedBed == null)
+            {
+                pawnStats.HasBed = false;
+            }
+            if (colonist.health.hediffSet.AnyHediffMakesSickThought)
+                pawnStats.IsSick = true;
+            else
+            {
+                pawnStats.IsSick = false;
+            }
             _statsDict[colonist] = pawnStats;
-
         }
 
         public static Boolean HasMood(Pawn pawn, ThoughtDef tdef)
@@ -318,49 +349,58 @@ namespace PSI
             if (!_inGame || !_iconsEnabled)
                 return;
 
-            foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisoners)
+            foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned) //.FreeColonistsAndPrisoners)
             {
-                UpdateColonistStats(colonist);
-                //try
-                //{
-                //    UpdateColonistStats(colonist);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Log.Notify_Exception(ex);
-                //}
+                if (colonist.SelectableNow())
+                {
+                    try
+                    {
+                        UpdateColonistStats(colonist);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Notify_Exception(ex);
+                    }
+                }
+
+                //UpdateColonistStats(colonist);
             }
         }
 
-        private static void UpdateOptionsDialog()
+        public void UpdateOptionsDialog()
         {
-            var dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
-            var isDialog = dialogOptions != null;
-            var isOpen = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
-            if (isDialog && isOpen)
+            Dialog_Options dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
+            bool flag = dialogOptions != null;
+            bool flag2 = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
+            if (flag && flag2)
             {
-                _settingsDialog.OptionsDialog = dialogOptions;
-                RecalcIconPositions();
+                PSI._settingsDialog.OptionsDialog = dialogOptions;
+                PSI.RecalcIconPositions();
+                return;
             }
-            else if (isDialog && !isOpen)
+            if (flag && !flag2)
             {
-                if (!_settingsDialog.CloseButtonClicked)
+                if (!PSI._settingsDialog.CloseButtonClicked)
                 {
-                    Find.UIRoot.windows.Add(_settingsDialog);
-                    _settingsDialog.Page = "main";
+                    Find.UIRoot.windows.Add(PSI._settingsDialog);
+                    PSI._settingsDialog.Page = "main";
+                    return;
                 }
-                else
-                    dialogOptions.Close();
-            }
-            else if (!isDialog && isOpen)
-            {
-                _settingsDialog.Close(false);
+                dialogOptions.Close(true);
+                return;
             }
             else
             {
-                if (isDialog || isOpen)
+                if (!flag && flag2)
+                {
+                    PSI._settingsDialog.Close(false);
                     return;
-                _settingsDialog.CloseButtonClicked = false;
+                }
+                if (!flag && !flag2)
+                {
+                    PSI._settingsDialog.CloseButtonClicked = false;
+                }
+                return;
             }
         }
 
@@ -378,6 +418,19 @@ namespace PSI
 
         private static void DrawColonistIcons(Pawn colonist)
         {
+
+            Color color25To21 = Color.red;
+
+            Color color20To16 = new Color(1f, 0.5f, 0f);
+
+            Color color15To11 = Color.yellow;
+
+            Color color10To06 = new Color(1f, 1f, 0.5f);
+
+            Color color05AndLess = Color.white;
+
+            Color colorMoodBoost = Color.green;
+
             var num1 = 0;
             PawnStats pawnStats;
             if (colonist.Dead || colonist.holder != null || (!_statsDict.TryGetValue(colonist, out pawnStats) || colonist.drafter == null) || colonist.skills == null)
@@ -464,7 +517,7 @@ namespace PSI
             // Disease
             if (Settings.ShowDisease)
             {
-                if (HasMood(colonist, ThoughtDef.Named("Sick")))
+                if (pawnStats.IsSick)
                     DrawIcon(drawPos, num1++, Icons.Sick, Color.white);
 
                 if (colonist.health.ShouldBeTendedNow && !colonist.health.ShouldDoSurgeryNow)
@@ -479,19 +532,8 @@ namespace PSI
                 if (colonist.health.ShouldDoSurgeryNow)
                     DrawIcon(drawPos, num1++, Icons.MedicalAttention, Color.blue);
 
-                if ((pawnStats.DiseaseDisappearance < Settings.LimitDiseaseLess) && (colonist.health.summaryHealth.SummaryHealthPercent < 1f))
-                {
-                    if ((pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess) < colonist.health.summaryHealth.SummaryHealthPercent)
-                        DrawIcon(drawPos, num1++, Icons.Disease, pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess, Color.red, Color.white);
-                    else
-                        DrawIcon(drawPos, num1++, Icons.Disease, colonist.health.summaryHealth.SummaryHealthPercent, Color.red, Color.white);
-                }
-
-                else if (pawnStats.DiseaseDisappearance < Settings.LimitDiseaseLess)
-                    DrawIcon(drawPos, num1++, Icons.Disease, pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess, Color.red, Color.white);
-
-                else if (colonist.health.summaryHealth.SummaryHealthPercent < 1f)
-                    DrawIcon(drawPos, num1++, Icons.Disease, colonist.health.summaryHealth.SummaryHealthPercent, Color.red, Color.white);
+                if (Settings.ShowDisease && pawnStats.IsSick && pawnStats.DiseaseDisappearance < Settings.LimitDiseaseLess)
+                    DrawIcon(drawPos, num1++, Icons.Disease, pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess);
             }
 
             // Bloodloss
@@ -509,10 +551,15 @@ namespace PSI
             }
 
             // Target Point 
-            if (!Settings.ShowTargetPoint || !(pawnStats.TargetPos != Vector3.zero))
+            if (Settings.ShowTargetPoint && (pawnStats.TargetPos != Vector3.zero || pawnStats.TargetPos != null))
                 DrawIcon(pawnStats.TargetPos, Vector3.zero, Icons.Target, TargetColor);
 
             // Traits and bad thoughts
+
+            // Bed status
+            if (Settings.ShowBedroom && !pawnStats.HasBed)
+                DrawIcon(drawPos, num1++, Icons.Bedroom, color10To06);
+
 
             // Room Status
             if (Settings.ShowRoomStatus && HasMood(colonist, ThoughtDef.Named("Crowded")))
@@ -521,19 +568,31 @@ namespace PSI
                 {
                     foreach (var thoughtDef in colonist.needs.mood.thoughts.Thoughts.ToArray())
                     {
+
                         if (thoughtDef.def.defName.Equals("Crowded"))
                         {
                             var thoughtStage = thoughtDef.CurStage;
                             if (thoughtStage.baseMoodEffect == -20f)
-                                DrawIcon(drawPos, num1++, Icons.Crowded, Color.red);
+                                DrawIcon(drawPos, num1++, Icons.Crowded, color20To16);
                             if (thoughtStage.baseMoodEffect == -12f)
-                                DrawIcon(drawPos, num1++, Icons.Crowded, Color.yellow);
+                                DrawIcon(drawPos, num1++, Icons.Crowded, color15To11);
                             if (thoughtStage.baseMoodEffect == -5f)
-                                DrawIcon(drawPos, num1++, Icons.Crowded, Color.white);
-
+                                DrawIcon(drawPos, num1++, Icons.Crowded, color05AndLess);
                         }
 
-
+                        if (thoughtDef.def.defName.Equals("Pain"))
+                        {
+                            // pain is always worse, +5 to the icon color
+                            var thoughtStage = thoughtDef.CurStage;
+                            if (thoughtStage.baseMoodEffect == -20f)
+                                DrawIcon(drawPos, num1++, Icons.Pain, color25To21);
+                            if (thoughtStage.baseMoodEffect == -15f)
+                                DrawIcon(drawPos, num1++, Icons.Pain, color20To16);
+                            if (thoughtStage.baseMoodEffect == -10f)
+                                DrawIcon(drawPos, num1++, Icons.Pain, color15To11);
+                            if (thoughtStage.baseMoodEffect == -5f)
+                                DrawIcon(drawPos, num1++, Icons.Pain, color10To06);
+                        }
 
                     }
 
@@ -584,19 +643,6 @@ namespace PSI
 
             if (Settings.ShowDeadColonists)
             {
-
-                Color color25To21 = Color.red;
-
-                Color color20To16 = new Color(1f, 0.5f, 0f);
-
-                Color color15To11 = Color.yellow;
-
-                Color color10 = new Color(1f, 1f, 0.5f);
-
-                Color color9AndLess = Color.white;
-
-                Color colorMoodBoost = Color.green;
-
                 // Close Family & friends / 25
 
 
@@ -644,7 +690,7 @@ namespace PSI
                 //friend depends on social
                 if (HasMood(colonist, ThoughtDef.Named("PawnWithGoodOpinionDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 // Notsoclose family / 15
@@ -668,32 +714,32 @@ namespace PSI
 
                 if (HasMood(colonist, ThoughtDef.Named("MyFatherDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyMotherDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyNieceDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyNephewDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyAuntDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyUncleDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color10To06);
                 }
 
                 //
@@ -707,46 +753,46 @@ namespace PSI
                 // not family, more whiter icon
                 if (HasMood(colonist, ThoughtDef.Named("KilledColonist")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("KilledColonyAnimal")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
 
                 //Everyone else / < 10
                 if (HasMood(colonist, ThoughtDef.Named("MyGrandparentDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
                 if (HasMood(colonist, ThoughtDef.Named("MyHalfSiblingDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyCousinDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
                 if (HasMood(colonist, ThoughtDef.Named("MyKinDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
                 if (HasMood(colonist, ThoughtDef.Named("MyGrandparentDied")))
                 {
-                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color9AndLess);
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
                 }
 
                 //non family
-                //if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathAlly")))
-                //{
-                //    DrawIcon(drawPos, num1++, Icons.DeadColonist, color_9andLess);
-                //}
-                //if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStranger")))
-                //{
-                //    DrawIcon(drawPos, num1++, Icons.DeadColonist, color_9andLess);
-                //}
+                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathAlly")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStranger")))
+                {
+                    DrawIcon(drawPos, num1++, Icons.DeadColonist, color05AndLess);
+                }
 
                 if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStrangerBloodlust")))
                 {

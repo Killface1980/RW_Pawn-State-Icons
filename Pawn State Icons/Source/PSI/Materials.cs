@@ -39,6 +39,8 @@ namespace PSI
         LeftUnburied,
         DeadColonist,
         Crowded,
+        Pain,
+        Bedroom,
         Length
     }
 

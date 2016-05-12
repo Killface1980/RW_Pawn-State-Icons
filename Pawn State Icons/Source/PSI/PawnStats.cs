@@ -12,7 +12,7 @@ namespace PSI
 
         public float BleedRate = -1f;
 
-        public float PawnPainRate = -1f;
+        public float PainRate = -1f;
 
         public Vector3 TargetPos = Vector3.zero;
 
@@ -20,6 +20,10 @@ namespace PSI
 
         public float ApparelHealth = 1f;
 
-        public float Drunkness;
+        public float Drunkness = 0f;
+
+        public bool HasBed = false;
+
+        public bool IsSick = false;
     }
 }
