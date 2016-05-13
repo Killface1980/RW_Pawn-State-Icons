@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -79,7 +78,7 @@ namespace PSI
 
         public static ModSettings LoadSettings(string path = "psi-settings.cfg")
         {
-            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(path);
+            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/" + path, true);
             string path2 = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/";
             if (Directory.Exists(path2))
             {
@@ -94,12 +93,12 @@ namespace PSI
 
         public static void SaveSettings(string path = "psi-settings.cfg")
         {
-            XmlSaver.SaveDataObject(Settings, path);
+            XmlSaver.SaveDataObject(PSI.Settings, GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/" + path);
         }
 
         #region Draw icons
 
-        private static void DrawIcon(Vector3 bodyPos, Vector3 posOffset, Icons icon, Color color)
+        private static void DrawIcon_posOffset(Vector3 bodyPos, Vector3 posOffset, Icons icon, Color color)
         {
 
             var material = Materials[icon];
@@ -134,26 +133,24 @@ namespace PSI
 
         private static void DrawIcon(Vector3 bodyPos, int num, Icons icon, Color color)
         {
-            DrawIcon(bodyPos, _iconPosVectors[num], icon, color);
+            DrawIcon_posOffset(bodyPos, _iconPosVectors[num], icon, color);
         }
 
-        private static void DrawIcon(Vector3 bodyPos, int num, Icons icon, float v)
+        private static void DrawIcon_FadeRedAlertToNeutral(Vector3 bodyPos, int num, Icons icon, float v)
         {
             DrawIcon(bodyPos, num, icon, new Color(1f, v, v, Settings.IconTransparancy));
-         //   DrawIcon(bodyPos, num, icon, new Color(1f, v, v));
         }
 
-        private static void DrawIcon(Vector3 bodyPos, int num, Icons icon, float v, Color c1, Color c2)
+        private static void DrawIcon_FadeFloatWithTwoColors(Vector3 bodyPos, int num, Icons icon, float v, Color c1, Color c2)
         {
-            v = v*Settings.IconTransparancy;
+            v = v * Settings.IconTransparancy;
             DrawIcon(bodyPos, num, icon, Color.Lerp(c1, c2, v));
         }
 
-        private static void DrawIcon(Vector3 bodyPos, int num, Icons icon, float v, Color c1, Color c2, Color c3)
+        private static void DrawIcon_FadeFloatWithThreeColors(Vector3 bodyPos, int num, Icons icon, float v, Color c1, Color c2, Color c3)
         {
             //check how to change trans here
-            DrawIcon(bodyPos, num, icon,
-                v < 0.5 ? Color.Lerp(c1, c2, v * 2f) : Color.Lerp(c2, c3, (float)((v - 0.5) * 2.0)));
+            DrawIcon(bodyPos, num, icon, v < 0.5 ? Color.Lerp(c1, c2, v * 2f) : Color.Lerp(c2, c3, (float)((v - 0.5) * 2.0)));
         }
 
         private static void RecalcIconPositions()
@@ -190,7 +187,7 @@ namespace PSI
             float efficiency = 10f;
 
             var array = _pawnCapacities;
-            foreach (PawnCapacityDef pawnCapacityDef in array)
+            foreach (var pawnCapacityDef in array)
             {
                 if (pawnCapacityDef != PawnCapacityDefOf.Consciousness)
                 {
@@ -217,7 +214,7 @@ namespace PSI
                 if (curDriver is JobDriver_DoBill)
                 {
                     JobDriver_DoBill jobDriverDoBill = (JobDriver_DoBill)curDriver;
-                    if (jobDriverDoBill.workLeft == 0f)
+                    if (jobDriverDoBill.workLeft == 0.0)
                     {
                         targetInfo = curJob.targetA;
                     }
@@ -279,14 +276,21 @@ namespace PSI
             foreach (var hediff in colonist.health.hediffSet.hediffs)
             {
                 var hediffWithComps = (HediffWithComps)hediff;
-                if (hediffWithComps != null
-                    && !hediffWithComps.FullyImmune()
-                    && hediffWithComps.Visible
-                    && !hediffWithComps.IsOld()
-                    //             && ((hediffWithComps.CurStage == null || hediffWithComps.CurStage.everVisible) && (hediffWithComps.def.tendable || hediffWithComps.def.naturallyHealed))
-                    && hediffWithComps.def.PossibleToDevelopImmunity())
+                if (hediffWithComps == null) continue;
+                if (hediffWithComps.IsOld()) continue;
+                if (!hediffWithComps.Visible) continue;
+                if (hediffWithComps.CurStage == null) continue;
+                if (!hediffWithComps.def.PossibleToDevelopImmunity()) continue;
 
-                    pawnStats.DiseaseDisappearance = Math.Min(pawnStats.DiseaseDisappearance, colonist.health.immunity.GetImmunity(hediffWithComps.def));
+                pawnStats.DiseaseDisappearance = Math.Min(val1: pawnStats.DiseaseDisappearance, val2: colonist.health.immunity.GetImmunity(hediffWithComps.def));
+//                pawnStats.DiseaseDisappearance = Math.Min(val1: pawnStats.DiseaseDisappearance, val2: colonist.health.immunity.GetImmunity(hediffWithComps.def));
+
+                //  if (!hediffWithComps.FullyImmune()
+                //      && (hediffWithComps.CurStage == null || hediffWithComps.CurStage.everVisible)
+                //      && (hediffWithComps.def.tendable || hediffWithComps.def.naturallyHealed)
+                //      && hediffWithComps.def.PossibleToDevelopImmunity())
+                {
+                }
             }
 
             // Apparel Calc
@@ -294,10 +298,10 @@ namespace PSI
             List<Apparel> wornApparel = colonist.apparel.WornApparel;
             for (int j = 0; j < wornApparel.Count; j++)
             {
-                float HitpointsPercent = (float)wornApparel[j].HitPoints / (float)wornApparel[j].MaxHitPoints;
-                if (HitpointsPercent >= 0f && HitpointsPercent < num2)
+                float hitpointsPercent = (float)wornApparel[j].HitPoints / (float)wornApparel[j].MaxHitPoints;
+                if (hitpointsPercent >= 0f && hitpointsPercent < num2)
                 {
-                    num2 = HitpointsPercent;
+                    num2 = hitpointsPercent;
                 }
             }
             pawnStats.ApparelHealth = num2;
@@ -424,17 +428,29 @@ namespace PSI
         {
             var transparancy = Settings.IconTransparancy;
 
-            Color color25To21 = new Color(1f,0f,0f, transparancy);
+            Color color25To21 = new Color(0.8f, 0f, 0f, transparancy);
 
-            Color color20To16 = new Color(1f, 0.5f, 0f, transparancy);
+            Color color20To16 = new Color(0.9f, 0.45f, 0f, transparancy);
 
-            Color color15To11 = new Color(1.0f,1.0f,0f, transparancy);
+            Color color15To11 = new Color(0.95f, 0.95f, 0f, transparancy);
 
-            Color color10To06 = new Color(1f, 1f, 0.5f, transparancy);
+            Color color10To06 = new Color(0.95f, 0.95f, 0.66f, transparancy);
 
-            Color color05AndLess = new Color(1f,1f,1f, transparancy);
+            Color color05AndLess = new Color(0.9f, 0.9f, 0.9f, transparancy);
 
-            Color colorMoodBoost = new Color(0f,1f,0f, transparancy);
+            Color colorMoodBoost = new Color(0f, 0.8f, 0f, transparancy);
+
+            // Color color25To21 = new Color(1f, 0f, 0f, transparancy);
+            //
+            // Color color20To16 = new Color(1f, 0.5f, 0f, transparancy);
+            //
+            // Color color15To11 = new Color(1.0f, 1.0f, 0f, transparancy);
+            //
+            // Color color10To06 = new Color(1f, 1f, 0.5f, transparancy);
+            //
+            // Color color05AndLess = new Color(1f, 1f, 1f, transparancy);
+            //
+            // Color colorMoodBoost = new Color(0f, 1f, 0f, transparancy);
 
             Color colorNeutralStatus = new Color(1f, 1f, 1f, transparancy);
 
@@ -443,18 +459,6 @@ namespace PSI
             Color colorOrangeAlert = new Color(1f, 0.5f, 0f, transparancy);
 
             Color colorYellowAlert = new Color(1f, 1f, 0f, transparancy);
-
-            //  Color color25To21 = Color.red;
-            //
-            //  Color color20To16 = new Color(1f, 0.5f, 0f);
-            //
-            //  Color color15To11 = Color.yellow;
-            //
-            //  Color color10To06 = new Color(1f, 1f, 0.5f);
-            //
-            //  Color color05AndLess = Color.white;
-            //
-            //  Color colorMoodBoost = Color.green;
 
             var num1 = 0;
             PawnStats pawnStats;
@@ -482,15 +486,15 @@ namespace PSI
 
             // Bad Mood
             if (Settings.ShowSad && colonist.needs.mood.CurLevel < (double)Settings.LimitMoodLess)
-                DrawIcon(drawPos, num1++, Icons.Sad, colonist.needs.mood.CurLevel / Settings.LimitMoodLess);
+                DrawIcon_FadeRedAlertToNeutral(drawPos, num1++, Icons.Sad, colonist.needs.mood.CurLevel / Settings.LimitMoodLess);
 
             // Hungry
             if (Settings.ShowHungry && colonist.needs.food.CurLevel < (double)Settings.LimitFoodLess)
-                DrawIcon(drawPos, num1++, Icons.Hungry, colonist.needs.food.CurLevel / Settings.LimitFoodLess);
+                DrawIcon_FadeRedAlertToNeutral(drawPos, num1++, Icons.Hungry, colonist.needs.food.CurLevel / Settings.LimitFoodLess);
 
             //Tired
             if (Settings.ShowTired && colonist.needs.rest.CurLevel < (double)Settings.LimitRestLess)
-                DrawIcon(drawPos, num1++, Icons.Tired, colonist.needs.rest.CurLevel / Settings.LimitRestLess);
+                DrawIcon_FadeRedAlertToNeutral(drawPos, num1++, Icons.Tired, colonist.needs.rest.CurLevel / Settings.LimitRestLess);
 
             // Too Cold & too hot --- change to transparancy?!?
             if (Settings.ShowCold && pawnStats.TooCold > 0.0)
@@ -498,19 +502,19 @@ namespace PSI
                 if (pawnStats.TooCold >= 0.0)
                 {
                     if (pawnStats.TooCold <= 1.0)
-                        DrawIcon(drawPos, num1++, Icons.Freezing, pawnStats.TooCold, new Color(1f, 1f, 1f, 0.3f), new Color(0.86f, 0.86f, 1f, 1f));
+                        DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Freezing, pawnStats.TooCold, new Color(1f, 1f, 1f, 0.3f), new Color(0.86f, 0.86f, 1f, 1f));
                     else if (pawnStats.TooCold <= 1.5)
-                        DrawIcon(drawPos, num1++, Icons.Freezing, (float)((pawnStats.TooCold - 1.0) * 2.0), new Color(0.86f, 0.86f, 1f, 1f), new Color(1f, 0.86f, 0.86f));
+                        DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Freezing, (float)((pawnStats.TooCold - 1.0) * 2.0), new Color(0.86f, 0.86f, 1f, 1f), new Color(1f, 0.86f, 0.86f));
                     else
-                        DrawIcon(drawPos, num1++, Icons.Freezing, (float)((pawnStats.TooCold - 1.5) * 2.0), new Color(1f, 0.86f, 0.86f), Color.red);
+                        DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Freezing, (float)((pawnStats.TooCold - 1.5) * 2.0), new Color(1f, 0.86f, 0.86f), Color.red);
                 }
             }
             else if (Settings.ShowHot && pawnStats.TooHot > 0.0 && pawnStats.TooCold >= 0.0)
             {
                 if (pawnStats.TooHot <= 1.0)
-                    DrawIcon(drawPos, num1++, Icons.Hot, pawnStats.TooHot, new Color(1f, 1f, 1f, 0.3f), new Color(1f, 0.7f, 0.0f, 1f));
+                    DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Hot, pawnStats.TooHot, new Color(1f, 1f, 1f, 0.3f), new Color(1f, 0.7f, 0.0f, 1f));
                 else
-                    DrawIcon(drawPos, num1++, Icons.Hot, pawnStats.TooHot - 1f, new Color(1f, 0.7f, 0.0f, 1f), Color.red);
+                    DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Hot, pawnStats.TooHot - 1f, new Color(1f, 0.7f, 0.0f, 1f), Color.red);
             }
 
             // Mental States
@@ -532,12 +536,12 @@ namespace PSI
                 if (colonist.MentalStateDef == MentalStateDefOf.BingingAlcohol)
                     DrawIcon(drawPos, num1++, Icons.Drunk, colorRedAlert);
                 else if (pawnStats.Drunkness > 0.05)
-                    DrawIcon(drawPos, num1++, Icons.Drunk, pawnStats.Drunkness, new Color(1f, 1f, 1f, 0.2f), colorNeutralStatus, colorRedAlert);
+                    DrawIcon_FadeFloatWithThreeColors(drawPos, num1++, Icons.Drunk, pawnStats.Drunkness, new Color(1f, 1f, 1f, 0.2f), colorNeutralStatus, colorRedAlert);
             }
 
             // Effectiveness
             if (Settings.ShowEffectiveness && pawnStats.TotalEfficiency < (double)Settings.LimitEfficiencyLess)
-                DrawIcon(drawPos, num1++, Icons.Effectiveness, pawnStats.TotalEfficiency / Settings.LimitEfficiencyLess);
+                DrawIcon_FadeRedAlertToNeutral(drawPos, num1++, Icons.Effectiveness, pawnStats.TotalEfficiency / Settings.LimitEfficiencyLess);
 
             // Disease
             if (Settings.ShowDisease)
@@ -558,24 +562,24 @@ namespace PSI
                     DrawIcon(drawPos, num1++, Icons.MedicalAttention, colorYellowAlert);
 
                 if (Settings.ShowDisease && pawnStats.IsSick && pawnStats.DiseaseDisappearance < Settings.LimitDiseaseLess)
-                    DrawIcon(drawPos, num1++, Icons.Disease, pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess);
+                    DrawIcon_FadeRedAlertToNeutral(drawPos, num1++, Icons.Disease, pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess);
             }
 
             // Bloodloss
             if (Settings.ShowBloodloss && pawnStats.BleedRate > 0.0f)
-                DrawIcon(drawPos, num1++, Icons.Bloodloss, pawnStats.BleedRate, colorRedAlert, colorNeutralStatus);
+                DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Bloodloss, pawnStats.BleedRate, colorRedAlert, colorNeutralStatus);
 
 
             // Apparel
             if (Settings.ShowApparelHealth && pawnStats.ApparelHealth < (double)Settings.LimitApparelHealthLess)
             {
                 var pawnApparelHealth = pawnStats.ApparelHealth / (double)Settings.LimitApparelHealthLess;
-                DrawIcon(drawPos, num1++, Icons.ApparelHealth, (float)pawnApparelHealth);
+                DrawIcon_FadeRedAlertToNeutral(drawPos, num1++, Icons.ApparelHealth, (float)pawnApparelHealth);
             }
 
             // Target Point 
             if (Settings.ShowTargetPoint && (pawnStats.TargetPos != Vector3.zero || pawnStats.TargetPos != null))
-                DrawIcon(pawnStats.TargetPos, Vector3.zero, Icons.Target, colorNeutralStatus);
+                DrawIcon_posOffset(pawnStats.TargetPos, Vector3.zero, Icons.Target, colorNeutralStatus);
 
             // Traits and bad thoughts
 
@@ -592,11 +596,11 @@ namespace PSI
                 if (Settings.ShowRoomStatus && thoughtDef.def.defName.Equals("Crowded"))
                 {
                     var thoughtStage = thoughtDef.CurStage;
-                    if (thoughtStage.baseMoodEffect == -20f)
+                    if (thoughtStage.baseMoodEffect < -19.5f && thoughtStage.baseMoodEffect > -20.5f)
                         DrawIcon(drawPos, num1++, Icons.Crowded, color20To16);
-                    if (thoughtStage.baseMoodEffect == -12f)
+                    if (thoughtStage.baseMoodEffect < -11.5f && thoughtStage.baseMoodEffect > -12.5f)
                         DrawIcon(drawPos, num1++, Icons.Crowded, color15To11);
-                    if (thoughtStage.baseMoodEffect == -5f)
+                    if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
                         DrawIcon(drawPos, num1++, Icons.Crowded, color05AndLess);
                 }
 
@@ -612,24 +616,9 @@ namespace PSI
                         DrawIcon(drawPos, num1++, Icons.Pain, color15To11);
                     if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
                         DrawIcon(drawPos, num1++, Icons.Pain, color10To06);
-
-                    // var thoughtStage = thoughtDef.CurStage;
-                    // if (thoughtStage.baseMoodEffect == -20f)
-                    //     DrawIcon(drawPos, num1++, Icons.Pain, color25To21);
-                    // if (thoughtStage.baseMoodEffect == -15f)
-                    //     DrawIcon(drawPos, num1++, Icons.Pain, color20To16);
-                    // if (thoughtStage.baseMoodEffect == -10f)
-                    //     DrawIcon(drawPos, num1++, Icons.Pain, color15To11);
-                    // if (thoughtStage.baseMoodEffect == -5f)
-                    //     DrawIcon(drawPos, num1++, Icons.Pain, color10To06);
                 }
 
             }
-
-
-
-            //   DrawIcon(drawPos, num1++, Icons.Crowded, Color.white);
-
 
             if (Settings.ShowProsthophile && HasMood(colonist, ThoughtDef.Named("ProsthophileNoProsthetic")))
             {
@@ -844,8 +833,6 @@ namespace PSI
                     DrawIcon(drawPos, num1++, Icons.DeadColonist, colorMoodBoost);
                 }
             }
-            return;
-
         }
 
         // ReSharper disable once InconsistentNaming
