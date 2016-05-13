@@ -273,25 +273,47 @@ namespace PSI
             // Health Calc
             pawnStats.DiseaseDisappearance = 1f;
 
-            foreach (var hediff in colonist.health.hediffSet.hediffs)
-            {
-                var hediffWithComps = (HediffWithComps)hediff;
-                if (hediffWithComps == null) continue;
-                if (hediffWithComps.IsOld()) continue;
-                if (!hediffWithComps.Visible) continue;
-                if (hediffWithComps.CurStage == null) continue;
-                if (!hediffWithComps.def.PossibleToDevelopImmunity()) continue;
+      //    foreach (var hediff in colonist.health.hediffSet.hediffs)
+      //    {
+      //        var hediffWithComps = (HediffWithComps)hediff;
 
-                pawnStats.DiseaseDisappearance = Math.Min(val1: pawnStats.DiseaseDisappearance, val2: colonist.health.immunity.GetImmunity(hediffWithComps.def));
-//                pawnStats.DiseaseDisappearance = Math.Min(val1: pawnStats.DiseaseDisappearance, val2: colonist.health.immunity.GetImmunity(hediffWithComps.def));
+            //  if (hediffWithComps == null) continue;
+            //
+            //  if (!hediffWithComps.Visible) continue;
+            //
+            //  if (!hediffWithComps.def.PossibleToDevelopImmunity()) continue;
+            //
+            //  if (hediffWithComps.CurStage == null) continue;
+            //
+            //  if (!hediffWithComps.CurStage.everVisible) continue; ;
+            //
+            //  if (hediffWithComps.IsOld()) continue;
+            //
+            //  if (hediffWithComps.FullyImmune()) continue;
+            //
+            //  if (hediffWithComps.def.naturallyHealed) continue;
+            //
+            //  if (!hediffWithComps.def.makesSickThought) continue;
+            //
+            //  if (!hediffWithComps.def.tendable) continue;
+        //
+        //      if (Math.Abs(colonist.health.immunity.GetImmunity(hediffWithComps.def) - 1.0) < 0.05) continue;
+        //
+        //      //
+        //
+        //      if (pawnStats.DiseaseDisappearance > colonist.health.immunity.GetImmunity(hediffWithComps.def))
+        //      {
+        //        pawnStats.DiseaseDisappearance = colonist.health.immunity.GetImmunity(hediffWithComps.def);
+        //      }
 
-                //  if (!hediffWithComps.FullyImmune()
+        //        pawnStats.DiseaseDisappearance = Math.Min(val1: pawnStats.DiseaseDisappearance, val2: colonist.health.immunity.GetImmunity(hediffWithComps.def));
+
+                //                pawnStats.DiseaseDisappearance = Math.Min(val1: pawnStats.DiseaseDisappearance, val2: colonist.health.immunity.GetImmunity(hediffWithComps.def));
+
                 //      && (hediffWithComps.CurStage == null || hediffWithComps.CurStage.everVisible)
                 //      && (hediffWithComps.def.tendable || hediffWithComps.def.naturallyHealed)
-                //      && hediffWithComps.def.PossibleToDevelopImmunity())
-                {
-                }
-            }
+
+       //     }
 
             // Apparel Calc
             float num2 = 999f;
@@ -324,6 +346,35 @@ namespace PSI
             {
                 pawnStats.IsSick = false;
             }
+
+
+            pawnStats.CrowdedMoodStage = 0;
+            
+            // Moods
+            foreach (var thoughtDef in colonist.needs.mood.thoughts.Thoughts.ToArray())
+            {
+                if (thoughtDef.def.defName.Equals("Crowded"))
+                {
+                    var thoughtStage = thoughtDef.CurStage;
+
+                    if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
+                    {
+                        pawnStats.CrowdedMoodStage = 1;
+                    }
+
+                    else if (thoughtStage.baseMoodEffect < -11.5f && thoughtStage.baseMoodEffect > -12.5f)
+                    {
+                        pawnStats.CrowdedMoodStage = 2;
+                    }
+
+                    else if (thoughtStage.baseMoodEffect < -19.5f && thoughtStage.baseMoodEffect > -20.5f)
+                    {
+                        pawnStats.CrowdedMoodStage = 3;
+                    }
+
+                }
+            }
+
             _statsDict[colonist] = pawnStats;
         }
 
@@ -367,8 +418,6 @@ namespace PSI
                         Log.Notify_Exception(ex);
                     }
                 }
-
-                //UpdateColonistStats(colonist);
             }
         }
 
@@ -590,19 +639,30 @@ namespace PSI
 
             // Moods
 
+            if (Settings.ShowRoomStatus && pawnStats.CrowdedMoodStage != 0)
+            {
+                if (pawnStats.CrowdedMoodStage == 3)
+                    DrawIcon(drawPos, num1++, Icons.Crowded, color20To16);
+                if (pawnStats.CrowdedMoodStage == 2)
+                    DrawIcon(drawPos, num1++, Icons.Crowded, color15To11);
+                if (pawnStats.CrowdedMoodStage == 1)
+                    DrawIcon(drawPos, num1++, Icons.Crowded, color05AndLess);
+            }
+
             foreach (var thoughtDef in colonist.needs.mood.thoughts.Thoughts.ToArray())
             {
 
-                if (Settings.ShowRoomStatus && thoughtDef.def.defName.Equals("Crowded"))
-                {
-                    var thoughtStage = thoughtDef.CurStage;
-                    if (thoughtStage.baseMoodEffect < -19.5f && thoughtStage.baseMoodEffect > -20.5f)
-                        DrawIcon(drawPos, num1++, Icons.Crowded, color20To16);
-                    if (thoughtStage.baseMoodEffect < -11.5f && thoughtStage.baseMoodEffect > -12.5f)
-                        DrawIcon(drawPos, num1++, Icons.Crowded, color15To11);
-                    if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
-                        DrawIcon(drawPos, num1++, Icons.Crowded, color05AndLess);
-                }
+
+                //              if (Settings.ShowRoomStatus && thoughtDef.def.defName.Equals("Crowded"))
+                //              {
+                //                  var thoughtStage = thoughtDef.CurStage;
+                //                  if (thoughtStage.baseMoodEffect < -19.5f && thoughtStage.baseMoodEffect > -20.5f)
+                //                      DrawIcon(drawPos, num1++, Icons.Crowded, color20To16);
+                //                  if (thoughtStage.baseMoodEffect < -11.5f && thoughtStage.baseMoodEffect > -12.5f)
+                //                      DrawIcon(drawPos, num1++, Icons.Crowded, color15To11);
+                //                  if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
+                //                      DrawIcon(drawPos, num1++, Icons.Crowded, color05AndLess);
+                //              }
 
                 if (Settings.ShowPain && thoughtDef.def.defName.Equals("Pain"))
                 {

@@ -25,5 +25,7 @@ namespace PSI
         public bool HasBed = false;
 
         public bool IsSick = false;
+
+        public int CrowdedMoodStage = 0;
     }
 }
