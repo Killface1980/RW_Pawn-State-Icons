@@ -75,7 +75,7 @@ namespace PSI
             }
 
             listing.DoLabel("PSI.Settings.IconTransparancy".Translate());
-            PSI.Settings.IconTransparancy = listing.DoSlider(PSI.Settings.IconTransparancy, 0.2f, 1f);
+            PSI.Settings.IconTransparancy = listing.DoSlider(PSI.Settings.IconTransparancy, 0.05f, 1f);
 
             listing.DoGap();
 

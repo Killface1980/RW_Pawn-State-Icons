@@ -12,8 +12,6 @@ namespace PSI
 
         public float BleedRate = -1f;
 
-        public float PainRate = -1f;
-
         public Vector3 TargetPos = Vector3.zero;
 
         public float DiseaseDisappearance = 1f;
@@ -26,6 +24,8 @@ namespace PSI
 
         public bool IsSick = false;
 
-        public int CrowdedMoodStage = 0;
+        public int CrowdedMoodLevel = 0;
+
+        public int PainMoodLevel = 0;
     }
 }
