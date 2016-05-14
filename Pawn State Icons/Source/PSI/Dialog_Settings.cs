@@ -174,7 +174,7 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Hungry".Translate(), ref PSI.Settings.ShowHungry);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Sad".Translate(), ref PSI.Settings.ShowSad);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Tired".Translate(), ref PSI.Settings.ShowTired);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Disease".Translate(), ref PSI.Settings.ShowDisease);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Sickness".Translate(), ref PSI.Settings.ShowDisease);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.NightOwl".Translate(), ref PSI.Settings.ShowNightOwl);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Greedy".Translate(), ref PSI.Settings.ShowGreedy);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Jealous".Translate(), ref PSI.Settings.ShowJealous);
@@ -184,6 +184,7 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Hralth".Translate(), ref PSI.Settings.ShowHealth);
 
             // to do: sort, cleanup + translation
 
