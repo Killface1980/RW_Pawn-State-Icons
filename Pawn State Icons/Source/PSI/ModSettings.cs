@@ -54,7 +54,7 @@
         public float LimitBleedMult = 3f;
         public float LimitApparelHealthLess = 0.33f;
         public float LimitTempComfortOffset;
-        public float IconTransparancy = 1f;
-
+        public float IconOpacity = 0.7f;
+        public float IconOpacityCritical = 0.6f;
     }
 }

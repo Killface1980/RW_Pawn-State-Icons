@@ -171,7 +171,7 @@ namespace PSI
         private static void DrawIcon_FadeRedAlertToNeutral(Vector3 bodyPos, int num, Icons icon, float v)
         {
             v = v * 0.9f; // max settings according to neutral icon
-            DrawIcon(bodyPos, num, icon, new Color(0.9f, v, v, Settings.IconTransparancy));
+            DrawIcon(bodyPos, num, icon, new Color(0.9f, v, v, Settings.IconOpacity));
         }
 
         private static void DrawIcon_FadeFloatWithTwoColors(Vector3 bodyPos, int num, Icons icon, float v, Color c1, Color c2)
@@ -183,6 +183,7 @@ namespace PSI
         {
             DrawIcon(bodyPos, num, icon, v < 0.5 ? Color.Lerp(c1, c2, v * 2f) : Color.Lerp(c2, c3, (float)((v - 0.5) * 2.0)));
         }
+
         private static void DrawIcon_FadeFloatWithFourColorsHB(Vector3 bodyPos, int num, Icons icon, float v, Color c1, Color c2, Color c3, Color c4)
         {
             if (v > 0.8f)
@@ -560,7 +561,7 @@ namespace PSI
 
         private static void DrawAnimalIcons(Pawn animal)
         {
-            var transparancy = Settings.IconTransparancy;
+            var transparancy = Settings.IconOpacity;
             var colorRedAlert = new Color(1f, 0f, 0f, transparancy);
 
             if (animal.Dead || animal.holder != null)
@@ -576,34 +577,36 @@ namespace PSI
 
         private static void DrawColonistIcons(Pawn colonist)
         {
-            var transparancy = Settings.IconTransparancy;
+            var transparancy = Settings.IconOpacity;
+
+            var transparancyCritical = Settings.IconOpacityCritical;
 
             var color25To21 = new Color(0.8f, 0f, 0f, transparancy);
-
-            var color20To16 = new Color(0.9f, 0.45f, 0f, transparancy);
-
-            var color15To11 = new Color(0.95f, 0.95f, 0f, transparancy);
-
-            var color10To06 = new Color(0.95f, 0.95f, 0.66f, transparancy);
-
-            var color05AndLess = new Color(0.9f, 0.9f, 0.9f, transparancy);
-
-            var colorMoodBoost = new Color(0f, 0.8f, 0f, transparancy);
-
-            var colorNeutralStatus = color05AndLess; // new Color(1f, 1f, 1f, transparancy);
-
-            var colorNeutralStatusSolid = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, 0.5f + transparancy * 0.2f);
-
-            var colorNeutralStatusFade = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, transparancy / 4);
-
-
-            var colorHealthBarGreen = new Color(0f, 0.8f, 0f, transparancy * 0.5f);
-
-            var colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, 0.75f + transparancy * 0.2f);
-
-            var colorOrangeAlert = new Color(color20To16.r, color20To16.g, color20To16.b, 0.6f + transparancy * 0.2f);
-
-            var colorYellowAlert = new Color(color15To11.r, color15To11.g, color15To11.b, 0.45f + transparancy * 0.2f);
+        
+          var color20To16 = new Color(0.9f, 0.45f, 0f, transparancy);
+        
+          var color15To11 = new Color(0.95f, 0.95f, 0f, transparancy);
+        
+          var color10To06 = new Color(0.95f, 0.95f, 0.66f, transparancy);
+        
+          var color05AndLess = new Color(0.9f, 0.9f, 0.9f, transparancy);
+        
+          var colorMoodBoost = new Color(0f, 0.8f, 0f, transparancy);
+        
+          var colorNeutralStatus = color05AndLess; // new Color(1f, 1f, 1f, transparancy);
+        
+          var colorNeutralStatusSolid = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, 0.5f + transparancy * 0.2f);
+        
+          var colorNeutralStatusFade = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, transparancy / 4);
+        
+        
+          var colorHealthBarGreen = new Color(0f, 0.8f, 0f, transparancy * 0.5f);
+        
+          var colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, transparancyCritical + (1-transparancyCritical)* transparancy);
+        
+          var colorOrangeAlert = new Color(color20To16.r, color20To16.g, color20To16.b, transparancyCritical + (1 - transparancyCritical) * transparancy);
+        
+          var colorYellowAlert = new Color(color15To11.r, color15To11.g, color15To11.b, transparancyCritical + (1 - transparancyCritical) * transparancy);
 
             int iconNum = 0;
 
@@ -612,43 +615,67 @@ namespace PSI
                 colonist.drafter == null || colonist.skills == null)
                 return;
 
-            Vector3 bodyLoc = colonist.DrawPos;
+            var bodyLoc = colonist.DrawPos;
 
-            // Mental States
-            if (Settings.ShowAggressive && colonist.MentalStateDef == MentalStateDefOf.Berserk)
-                DrawIcon(bodyLoc, iconNum++, Icons.Aggressive, colorRedAlert);
-
-            if (Settings.ShowLeave && colonist.MentalStateDef == MentalStateDefOf.GiveUpExit)
-                DrawIcon(bodyLoc, iconNum++, Icons.Leave, colorRedAlert);
-
-            if (Settings.ShowDazed && colonist.MentalStateDef == MentalStateDefOf.DazedWander)
-                DrawIcon(bodyLoc, iconNum++, Icons.Dazed, colorYellowAlert);
-
-            if (colonist.MentalStateDef == MentalStateDefOf.PanicFlee)
-                DrawIcon(bodyLoc, iconNum++, Icons.Panic, colorYellowAlert);
-
-            // Idle
-            if (Settings.ShowIdle && colonist.mindState.IsIdle)
-                DrawIcon(bodyLoc, iconNum++, Icons.Idle, colorNeutralStatus);
-
-            // Pacifc + Unarmed
-            if (colonist.skills.GetSkill(SkillDefOf.Melee).TotallyDisabled &&
-                colonist.skills.GetSkill(SkillDefOf.Shooting).TotallyDisabled)
-            {
-                if (Settings.ShowPacific)
-                    DrawIcon(bodyLoc, iconNum++, Icons.Pacific, colorNeutralStatus);
-            }
-            else if (Settings.ShowUnarmed && colonist.equipment.Primary == null && !colonist.IsPrisonerOfColony)
-                DrawIcon(bodyLoc, iconNum++, Icons.Unarmed, colorNeutralStatus);
+            // Target Point 
+            if (Settings.ShowTargetPoint && (pawnStats.TargetPos != Vector3.zero))
+                //                if (Settings.ShowTargetPoint && (pawnStats.TargetPos != Vector3.zero || pawnStats.TargetPos != null))
+                DrawIcon_posOffset(pawnStats.TargetPos, Vector3.zero, Icons.Target, colorNeutralStatusSolid);
 
             //Drafted
             if (Settings.ShowDraft && colonist.drafter.Drafted)
                 DrawIcon(bodyLoc, iconNum++, Icons.Draft, colorNeutralStatusSolid);
 
+            // Berserk
+            if (Settings.ShowAggressive && colonist.MentalStateDef == MentalStateDefOf.Berserk)
+                DrawIcon(bodyLoc, iconNum++, Icons.Aggressive, colorRedAlert);
+
+            // Binging on alcohol
+            if (Settings.ShowDrunk)
+            {
+                if (colonist.MentalStateDef == MentalStateDefOf.BingingAlcohol)
+                    DrawIcon(bodyLoc, iconNum++, Icons.Drunk, colorRedAlert);
+                else if (pawnStats.Drunkness > 0.05)
+                    DrawIcon_FadeFloatWithThreeColors(bodyLoc, iconNum++, Icons.Drunk, pawnStats.Drunkness, colorYellowAlert, colorOrangeAlert, colorRedAlert);
+            }
+
+            // Give Up Exit
+            if (Settings.ShowLeave && colonist.MentalStateDef == MentalStateDefOf.GiveUpExit)
+                DrawIcon(bodyLoc, iconNum++, Icons.Leave, colorRedAlert);
+
+            //Daze Wander
+            if (Settings.ShowDazed && colonist.MentalStateDef == MentalStateDefOf.DazedWander)
+                DrawIcon(bodyLoc, iconNum++, Icons.Dazed, colorYellowAlert);
+
+            //PanicFlee
+            if (colonist.MentalStateDef == MentalStateDefOf.PanicFlee)
+                DrawIcon(bodyLoc, iconNum++, Icons.Panic, colorYellowAlert);
+            // Pacifc + Unarmed
+
+            if (Settings.ShowPacific || Settings.ShowUnarmed)
+            {
+                if (colonist.skills.GetSkill(SkillDefOf.Melee).TotallyDisabled && colonist.skills.GetSkill(SkillDefOf.Shooting).TotallyDisabled)
+                {
+                    if (Settings.ShowPacific)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pacific, colorNeutralStatus);
+                }
+                else if (Settings.ShowUnarmed && colonist.equipment.Primary == null && !colonist.IsPrisonerOfColony)
+                    DrawIcon(bodyLoc, iconNum++, Icons.Unarmed, colorNeutralStatus);
+            }
+
+            // Idle
+            if (Settings.ShowIdle && colonist.mindState.IsIdle)
+                DrawIcon(bodyLoc, iconNum++, Icons.Idle, colorNeutralStatus);
+            
+
+            // Bad Mood
+            if (Settings.ShowSad && colonist.needs.mood.CurLevel < (double)Settings.LimitMoodLess)
+                DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.Sad,
+                    colonist.needs.mood.CurLevel / Settings.LimitMoodLess);
+
             // Bloodloss
             if (Settings.ShowBloodloss && pawnStats.BleedRate > 0.0f)
-                DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Bloodloss, pawnStats.BleedRate, colorRedAlert,
-                    colorNeutralStatus);
+                DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Bloodloss, pawnStats.BleedRate, colorRedAlert, colorNeutralStatus);
 
             //Health
             if (Settings.ShowHealth)
@@ -661,29 +688,19 @@ namespace PSI
                 }
             }
 
+
+
             // Sickness
-            if (Settings.ShowDisease)
+            if (Settings.ShowDisease  && pawnStats.IsSick)
             {
-                if (pawnStats.IsSick)
-                {
-                    if (pawnStats.DiseaseDisappearance < Settings.LimitDiseaseLess)
+                                    if (pawnStats.DiseaseDisappearance < Settings.LimitDiseaseLess)
                     {
                         DrawIcon_FadeFloatWithFourColorsHB(bodyLoc, iconNum++, Icons.Sickness, pawnStats.DiseaseDisappearance / Settings.LimitDiseaseLess, colorHealthBarGreen, colorYellowAlert, colorOrangeAlert, colorRedAlert);
                     }
                     else
                     {
-                    DrawIcon(bodyLoc, iconNum++, Icons.Sickness, colorNeutralStatus);                        
+                        DrawIcon(bodyLoc, iconNum++, Icons.Sickness, colorNeutralStatus);
                     }
-                }
-
-                if (colonist.health.ShouldBeTendedNow && !colonist.health.ShouldDoSurgeryNow) DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorOrangeAlert);
-                else if (colonist.health.ShouldBeTendedNow && colonist.health.ShouldDoSurgeryNow)
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorYellowAlert);
-                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorOrangeAlert);
-                }
-                else if (colonist.health.ShouldDoSurgeryNow)
-                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorYellowAlert);
             }
 
             // Pain
@@ -701,11 +718,18 @@ namespace PSI
                     DrawIcon(bodyLoc, iconNum++, Icons.Pain, color25To21);
             }
 
-
-            // Bad Mood
-            if (Settings.ShowSad && colonist.needs.mood.CurLevel < (double)Settings.LimitMoodLess)
-                DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.Sad,
-                    colonist.needs.mood.CurLevel / Settings.LimitMoodLess);
+            if (Settings.ShowDisease)
+            {
+                if (colonist.health.ShouldBeTendedNow && !colonist.health.ShouldDoSurgeryNow)
+                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorOrangeAlert);
+                else if (colonist.health.ShouldBeTendedNow && colonist.health.ShouldDoSurgeryNow)
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorYellowAlert);
+                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorOrangeAlert);
+                }
+                else if (colonist.health.ShouldDoSurgeryNow)
+                    DrawIcon(bodyLoc, iconNum++, Icons.MedicalAttention, colorYellowAlert);
+            }
 
             // Hungry
             if (Settings.ShowHungry && colonist.needs.food.CurLevel < (double)Settings.LimitFoodLess)
@@ -717,7 +741,7 @@ namespace PSI
                 DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.Tired,
                     colonist.needs.rest.CurLevel / Settings.LimitRestLess);
 
-            // Too Cold & too hot --- change to transparancy?!?
+            // Too Cold & too hot
             if (Settings.ShowCold && pawnStats.TooCold > 0f)
             {
                 if (pawnStats.TooCold >= 0f)
@@ -729,47 +753,34 @@ namespace PSI
                     else
                         DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Freezing, (pawnStats.TooCold - 1.5f) * 2f, colorOrangeAlert, colorRedAlert);
                 }
-                // if (pawnStats.TooCold >= 0.0)
-                // {
-                //     if (pawnStats.TooCold <= 1.0)
-                //         DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Freezing, pawnStats.TooCold, new Color(1f, 1f, 1f, 0.3f / transparancy), new Color(0.86f, 0.86f, 1f, 1f / transparancy));
-                //     else if (pawnStats.TooCold <= 1.5)
-                //         DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Freezing, (float)((pawnStats.TooCold - 1.0) * 2.0), new Color(0.86f, 0.86f, 1f, 1f), new Color(1f, 0.86f, 0.86f));
-                //     else
-                //         DrawIcon_FadeFloatWithTwoColors(drawPos, num1++, Icons.Freezing, (float)((pawnStats.TooCold - 1.5) * 2.0), new Color(1f, 0.86f, 0.86f), Color.red);
-                // }
             }
             else if (Settings.ShowHot && pawnStats.TooHot > 0f && pawnStats.TooCold >= 0f)
             {
                 if (pawnStats.TooHot <= 1f)
-                    DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot, colorNeutralStatusFade,
-                        colorYellowAlert);
+                    DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot, colorNeutralStatusFade, colorYellowAlert);
                 else if (pawnStats.TooHot <= 1.5f)
-                    DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot, colorYellowAlert,
-                        colorOrangeAlert);
+                    DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot, colorYellowAlert, colorOrangeAlert);
                 else
-                    DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot - 1f, colorOrangeAlert,
-                        colorRedAlert);
+                    DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot - 1f, colorOrangeAlert, colorRedAlert);
             }
 
 
-            // Binging on alcohol
-            if (Settings.ShowDrunk)
+            // Bed status
+            if (Settings.ShowBedroom && !pawnStats.HasBed)
+                DrawIcon(bodyLoc, iconNum++, Icons.Bedroom, color10To06);
+
+
+            // Usage of bed ...
+            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("WantToSleepWithSpouseOrLover")))
             {
-                if (colonist.MentalStateDef == MentalStateDefOf.BingingAlcohol)
-                    DrawIcon(bodyLoc, iconNum++, Icons.Drunk, colorRedAlert);
-                //                DrawIcon(drawPos, num1++, Icons.Drunk, colorRedAlert);
-                else if (pawnStats.Drunkness > 0.05)
-                    DrawIcon_FadeFloatWithThreeColors(bodyLoc, iconNum++, Icons.Drunk, pawnStats.Drunkness, colorNeutralStatusFade, colorNeutralStatus, colorRedAlert);
-                //              DrawIcon_FadeFloatWithThreeColors(drawPos, num1++, Icons.Drunk, pawnStats.Drunkness, colorNeutralStatusFade, colorNeutralStatus, colorRedAlert);
+                DrawIcon(bodyLoc, iconNum++, Icons.Love, color05AndLess);
             }
 
-            // Effectiveness
-            if (Settings.ShowEffectiveness && pawnStats.TotalEfficiency < (double)Settings.LimitEfficiencyLess)
-                DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.Effectiveness,
-                    pawnStats.TotalEfficiency / Settings.LimitEfficiencyLess);
-
-
+            // Naked
+            if (Settings.ShowNaked && HasMood(colonist, ThoughtDef.Named("Naked")))
+            {
+                DrawIcon(bodyLoc, iconNum++, Icons.Naked, color10To06);
+            }
 
             // Apparel
             if (Settings.ShowApparelHealth && pawnStats.ApparelHealth < (double)Settings.LimitApparelHealthLess)
@@ -778,18 +789,7 @@ namespace PSI
                 DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.ApparelHealth, (float)pawnApparelHealth);
             }
 
-            // Target Point 
-            if (Settings.ShowTargetPoint && (pawnStats.TargetPos != Vector3.zero || pawnStats.TargetPos != null))
-                DrawIcon_posOffset(pawnStats.TargetPos, Vector3.zero, Icons.Target, colorNeutralStatusSolid);
-
-            // Traits and bad thoughts
-
-            // Bed status
-            if (Settings.ShowBedroom && !pawnStats.HasBed)
-                DrawIcon(bodyLoc, iconNum++, Icons.Bedroom, color10To06);
-
-
-            // Moods
+            // Moods caused by traits
 
             if (Settings.ShowProsthophile && HasMood(colonist, ThoughtDef.Named("ProsthophileNoProsthetic")))
             {
@@ -816,15 +816,18 @@ namespace PSI
                 DrawIcon(bodyLoc, iconNum++, Icons.Jealous, color10To06);
             }
 
-            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("WantToSleepWithSpouseOrLover")))
-            {
-                DrawIcon(bodyLoc, iconNum++, Icons.Love, color05AndLess);
-            }
 
-            if (Settings.ShowNaked && HasMood(colonist, ThoughtDef.Named("Naked")))
-            {
-                DrawIcon(bodyLoc, iconNum++, Icons.Naked, color10To06);
-            }
+            // Effectiveness
+            if (Settings.ShowEffectiveness && pawnStats.TotalEfficiency < (double)Settings.LimitEfficiencyLess)
+                DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.Effectiveness,
+                    pawnStats.TotalEfficiency / Settings.LimitEfficiencyLess);
+
+
+
+
+
+
+            // Bad thoughts
 
             if (Settings.ShowLeftUnburied && HasMood(colonist, ThoughtDef.Named("ColonistLeftUnburied")))
             {
@@ -1006,11 +1009,11 @@ namespace PSI
                 if (Settings.ShowRoomStatus && pawnStats.CrowdedMoodLevel != 0)
                 {
                     if (pawnStats.CrowdedMoodLevel == 1)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Crowded, color05AndLess);
+                        DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorNeutralStatusFade);
                     if (pawnStats.CrowdedMoodLevel == 2)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Crowded, color15To11);
+                        DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorYellowAlert);
                     if (pawnStats.CrowdedMoodLevel == 3)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Crowded, color20To16);
+                        DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorOrangeAlert);
                 }
             }
         }

@@ -74,8 +74,11 @@ namespace PSI
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
-            listing.DoLabel("PSI.Settings.IconTransparancy".Translate());
-            PSI.Settings.IconTransparancy = listing.DoSlider(PSI.Settings.IconTransparancy, 0.05f, 1f);
+            listing.DoLabel("PSI.Settings.IconOpacity".Translate());
+            PSI.Settings.IconOpacity = listing.DoSlider(PSI.Settings.IconOpacity, 0.05f, 1f);
+
+            listing.DoLabel("PSI.Settings.IconOpacityCritical".Translate());
+            PSI.Settings.IconOpacityCritical = listing.DoSlider(PSI.Settings.IconOpacityCritical, 0f, 1f);
 
             listing.DoGap();
 
@@ -232,7 +235,8 @@ namespace PSI
                             PSI.Settings.IconsScreenScale = settings.IconsScreenScale;
                             PSI.Settings.IconsInColumn = settings.IconsInColumn;
                             PSI.Settings.IconSize = settings.IconSize;
-                            PSI.Settings.IconTransparancy= settings.IconTransparancy;
+                            PSI.Settings.IconOpacity = settings.IconOpacity;
+                            PSI.Settings.IconOpacity = settings.IconOpacityCritical;
                         }
                         catch (IOException)
                         {
