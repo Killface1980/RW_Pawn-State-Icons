@@ -3,10 +3,9 @@
   <PSI.Enabled>Pawn State Icons enabled</PSI.Enabled>
   <PSI.Disabled>Pawn State Icons disabled. Press F11 to reenable</PSI.Disabled>
   <PSI.Settings.IconSet>Icon set: </PSI.Settings.IconSet>
-  <PSI.Settings.IconOpacity>Basic icon opacity</PSI.Settings.IconOpacity>
-  <PSI.Settings.IconOpacityCritical>Minimum opacity of critical alerts</PSI.Settings.IconOpacityCritical>
   <PSI.Settings.Advanced>Advanced</PSI.Settings.Advanced>
   <PSI.Settings.VisibilityButton>Visibility...</PSI.Settings.VisibilityButton>
+  <PSI.Settings.OpacityAndColorButton>Opacity and color...</PSI.Settings.OpacityAndColorButton>
   <PSI.Settings.ArrangementButton>Size and arrangement...</PSI.Settings.ArrangementButton>
   <PSI.Settings.SensitivityButton>Sensitivity...</PSI.Settings.SensitivityButton>
 
@@ -23,6 +22,11 @@
   <PSI.Settings.SizeLabel.6>large</PSI.Settings.SizeLabel.6>
   <PSI.Settings.SizeLabel.7>very large</PSI.Settings.SizeLabel.7>
   <PSI.Settings.SizeLabel.8>enormous</PSI.Settings.SizeLabel.8>
+
+  <PSI.Settings.IconOpacityAndColor.Header>Opacity and color</PSI.Settings.IconOpacityAndColor.Header>
+  <PSI.Settings.IconOpacityAndColor.Opacity>Basic icon opacity</PSI.Settings.IconOpacityAndColor.Opacity>
+  <PSI.Settings.IconOpacityAndColor.OpacityCritical>Minimum opacity of critical alerts</PSI.Settings.IconOpacityAndColor.OpacityCritical>
+  <PSI.Settings.IconOpacityAndColor.UseColoredTarget>Individual target point</PSI.Settings.IconOpacityAndColor.UseColoredTarget>
 
   <PSI.Settings.Visibility.Header>Visibility</PSI.Settings.Visibility.Header>
   <PSI.Settings.Visibility.TargetPoint>Target point</PSI.Settings.Visibility.TargetPoint>

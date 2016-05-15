@@ -1,4 +1,6 @@
-﻿namespace PSI
+﻿using UnityEngine;
+
+namespace PSI
 {
     public class ModSettings
     {
@@ -56,5 +58,9 @@
         public float LimitTempComfortOffset;
         public float IconOpacity = 0.7f;
         public float IconOpacityCritical = 0.6f;
+        public bool UseColoredTarget = true;
+
+        public Color IconColorCritical;
+
     }
 }

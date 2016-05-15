@@ -27,5 +27,7 @@ namespace PSI
         public int CrowdedMoodLevel = 0;
 
         public int PainMoodLevel = 0;
+
+        public float ToxicBuildUp = 0;
     }
 }

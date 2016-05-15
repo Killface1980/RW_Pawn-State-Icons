@@ -41,6 +41,10 @@ namespace PSI
         Crowded,
         Pain,
         Bedroom,
+        Toxic,
+        Marriage,
+        TargetHair,
+        TargetSkin,
         Length
     }
 

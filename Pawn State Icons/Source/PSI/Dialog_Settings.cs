@@ -74,18 +74,15 @@ namespace PSI
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
-            listing.DoLabel("PSI.Settings.IconOpacity".Translate());
-            PSI.Settings.IconOpacity = listing.DoSlider(PSI.Settings.IconOpacity, 0.05f, 1f);
-
-            listing.DoLabel("PSI.Settings.IconOpacityCritical".Translate());
-            PSI.Settings.IconOpacityCritical = listing.DoSlider(PSI.Settings.IconOpacityCritical, 0f, 1f);
-
             listing.DoGap();
 
             DoHeading(listing, "PSI.Settings.Advanced");
 
             if (listing.DoTextButton("PSI.Settings.VisibilityButton".Translate()))
                 Page = "showhide";
+
+            if (listing.DoTextButton("PSI.Settings.OpacityAndColorButton".Translate()))
+                Page = "opacityandcolor";
 
             if (listing.DoTextButton("PSI.Settings.ArrangementButton".Translate()))
                 Page = "arrange";
@@ -160,6 +157,24 @@ namespace PSI
                 return;
 
             Page = "main";
+        }
+
+        private void FillPageOpacityAndColor(Listing_Standard listing)
+        {
+            DoHeading(listing, "PSI.Settings.IconOpacityAndColor.Header");
+            listing.DoLabel("PSI.Settings.IconOpacityAndColor.Opacity".Translate());
+            PSI.Settings.IconOpacity = listing.DoSlider(PSI.Settings.IconOpacity, 0.05f, 1f);
+
+            listing.DoLabel("PSI.Settings.IconOpacityAndColor.OpacityCritical".Translate());
+            PSI.Settings.IconOpacityCritical = listing.DoSlider(PSI.Settings.IconOpacityCritical, 0f, 1f);
+
+            listing.DoLabelCheckbox("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
+
+
+            listing.DoLabel("Custom color settings coming from CCL in future");
+
+            if (listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
+                Page = "main";
         }
 
         private void FillPageShowHide(Listing_Standard listing)
@@ -273,7 +288,7 @@ namespace PSI
 
             listing.DoLabel("PSI.Settings.Arrangement.IconsPerColumn".Translate() + PSI.Settings.IconsInColumn);
 
-            PSI.Settings.IconsInColumn = (int)listing.DoSlider(PSI.Settings.IconsInColumn, 1f, 9f);
+            PSI.Settings.IconsInColumn = (int)listing.DoSlider(PSI.Settings.IconsInColumn, 1f, 7f);
 
             if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
                 return;
@@ -298,6 +313,8 @@ namespace PSI
 
             if (Page == "showhide")
                 FillPageShowHide(listing);
+            else if (Page == "opacityandcolor")
+                FillPageOpacityAndColor(listing);
             else if (Page == "arrange")
                 FillPageArrangement(listing);
             else if (Page == "limits")
