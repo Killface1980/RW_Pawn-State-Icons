@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Verse;
 
 namespace PSI
 {
@@ -29,5 +30,11 @@ namespace PSI
         public int PainMoodLevel = 0;
 
         public float ToxicBuildUp = 0;
+
+        public MentalStateDef MentalSanity = null;
+
+        public float HealthDisease = 1f;
+
+        public bool HasLifeThreateningDisease = false;
     }
 }
