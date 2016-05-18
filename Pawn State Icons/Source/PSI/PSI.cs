@@ -65,7 +65,7 @@ namespace PSI
             if (reloadIconSet)
             {
                 Materials = new Materials(Settings.IconSet);
-                var modSettings =
+                ModSettings modSettings =
                     XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
                 Settings.IconSizeMult = modSettings.IconSizeMult;
                 Materials.ReloadTextures(true);
@@ -78,12 +78,12 @@ namespace PSI
 
         public static ModSettings LoadSettings(string path = "psi-settings.cfg")
         {
-            var result = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/" + path, true);
-            var path2 = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/";
+            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/" + path, true);
+            string path2 = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/";
             if (Directory.Exists(path2))
             {
                 IconSets = Directory.GetDirectories(path2);
-                for (var i = 0; i < IconSets.Length; i++)
+                for (int i = 0; i < IconSets.Length; i++)
                 {
                     IconSets[i] = new DirectoryInfo(IconSets[i]).Name;
                 }
@@ -98,14 +98,20 @@ namespace PSI
 
         public virtual void OnGUI()
         {
-            if (!_inGame || Find.TickManager.Paused)
-                UpdateOptionsDialog();
+                 if (_inGame && Find.TickManager.Paused)
+                     UpdateOptionsDialog();
+
+                 if (!_inGame)
+                     UpdateOptionsDialog();
+
+            //     if (!_inGame || Find.TickManager.Paused))
+            //         UpdateOptionsDialog();
+
 
             if (!_iconsEnabled || !_inGame)
                 return;
 
-            //            foreach (var pawn in Find.Map.mapPawns.AllPawns)
-            foreach (var pawn in Find.Map.mapPawns.AllPawnsSpawned)
+            foreach (Pawn pawn in Find.Map.mapPawns.AllPawns)
             {
                 if (pawn?.RaceProps == null) continue;
 
@@ -134,13 +140,13 @@ namespace PSI
 
         private static void DrawIcon_posOffset(Vector3 bodyPos, Vector3 posOffset, Icons icon, Color color)
         {
-            var material = Materials[icon];
+            Material material = Materials[icon];
             if (material == null)
                 return;
             LongEventHandler.ExecuteWhenFinished(() =>
             {
                 material.color = color;
-                var guiColor = GUI.color;
+                Color guiColor = GUI.color;
                 GUI.color = color;
                 Vector2 vector2;
 
@@ -153,12 +159,12 @@ namespace PSI
                 else
                     vector2 = (bodyPos + posOffset).ToScreenPosition();
 
-                var wordscale = _worldScale;
+                float wordscale = _worldScale;
 
                 if (Settings.IconsScreenScale)
                     wordscale = 45f;
-                var num2 = wordscale * (Settings.IconSizeMult * 0.5f);
-                var position = new Rect(vector2.x, vector2.y, num2 * Settings.IconSize, num2 * Settings.IconSize);
+                float num2 = wordscale * (Settings.IconSizeMult * 0.5f);
+                Rect position = new Rect(vector2.x, vector2.y, num2 * Settings.IconSize, num2 * Settings.IconSize);
                 position.x -= position.width * 0.5f;
                 position.y -= position.height * 0.5f;
                 GUI.DrawTexture(position, material.mainTexture, ScaleMode.ScaleToFit, true);
@@ -235,13 +241,13 @@ namespace PSI
         {
             //            _iconPosVectors = new Vector3[18];
             _iconPosVectors = new Vector3[40];
-            for (var index = 0; index < _iconPosVectors.Length; ++index)
+            for (int index = 0; index < _iconPosVectors.Length; ++index)
             {
-                var num1 = index / Settings.IconsInColumn;
-                var num2 = index % Settings.IconsInColumn;
+                int num1 = index / Settings.IconsInColumn;
+                int num2 = index % Settings.IconsInColumn;
                 if (Settings.IconsHorizontal)
                 {
-                    var num3 = num1;
+                    int num3 = num1;
                     num1 = num2;
                     num2 = num3;
                 }
@@ -273,14 +279,14 @@ namespace PSI
 
             if (colonist == null) return;
 
-            var pawnStats = _statsDict[colonist];
+            PawnStats pawnStats = _statsDict[colonist];
 
 
             // efficiency
-            var efficiency = 10f;
+            float efficiency = 10f;
 
-            var array = _pawnCapacities;
-            foreach (var pawnCapacityDef in array)
+            PawnCapacityDef[] array = _pawnCapacities;
+            foreach (PawnCapacityDef pawnCapacityDef in array)
             {
                 if (pawnCapacityDef != PawnCapacityDefOf.Consciousness)
                 {
@@ -299,9 +305,9 @@ namespace PSI
 
             if (colonist.jobs.curJob != null)
             {
-                var curDriver = colonist.jobs.curDriver;
-                var curJob = colonist.jobs.curJob;
-                var targetInfo = curJob.targetA;
+                JobDriver curDriver = colonist.jobs.curDriver;
+                Job curJob = colonist.jobs.curJob;
+                TargetInfo targetInfo = curJob.targetA;
                 if (curDriver is JobDriver_HaulToContainer || curDriver is JobDriver_HaulToCell ||
                     curDriver is JobDriver_FoodDeliver || curDriver is JobDriver_FoodFeedPatient ||
                     curDriver is JobDriver_TakeToBed)
@@ -311,7 +317,7 @@ namespace PSI
                 JobDriver_DoBill bill = curDriver as JobDriver_DoBill;
                 if (bill != null)
                 {
-                    var jobDriverDoBill = bill;
+                    JobDriver_DoBill jobDriverDoBill = bill;
                     if (jobDriverDoBill.workLeft >= 0.0)
                     {
                         targetInfo = curJob.targetA;
@@ -344,7 +350,7 @@ namespace PSI
                 bool flag;
                 if (targetInfo != null)
                 {
-                    var arg2420 = targetInfo.Cell;
+                    IntVec3 arg2420 = targetInfo.Cell;
                     flag = false;
                 }
                 else
@@ -353,13 +359,13 @@ namespace PSI
                 }
                 if (!flag)
                 {
-                    var a = targetInfo.Cell.ToVector3Shifted();
+                    Vector3 a = targetInfo.Cell.ToVector3Shifted();
                     pawnStats.TargetPos = a + new Vector3(0f, 3f, 0f);
                 }
             }
 
             // temperature
-            var temperatureForCell = GenTemperature.GetTemperatureForCell(colonist.Position);
+            float temperatureForCell = GenTemperature.GetTemperatureForCell(colonist.Position);
 
             pawnStats.TooCold =
                 (float)
@@ -398,7 +404,7 @@ namespace PSI
                     int i;
                     for (i = 0; i < colonist.health.hediffSet.hediffs.Count; i++)
                     {
-                        var hediff = colonist.health.hediffSet.hediffs[i];
+                        Hediff hediff = colonist.health.hediffSet.hediffs[i];
                         HediffWithComps hediffWithComps;
 
                         if ((HediffWithComps)hediff != null)
@@ -409,7 +415,7 @@ namespace PSI
 
                         pawnStats.ToxicBuildUp = 0;
 
-                            //pawnStats.ToxicBuildUp
+                        //pawnStats.ToxicBuildUp
                         if (hediffWithComps.def.defName.Equals("ToxicBuildup"))
                         {
                             pawnStats.ToxicBuildUp = hediffWithComps.Severity;
@@ -417,9 +423,9 @@ namespace PSI
 
                         if (hediffWithComps.def.defName.Equals("WoundInfection") || hediffWithComps.def.defName.Equals("Flu") || hediffWithComps.def.defName.Equals("Plague") || hediffWithComps.def.defName.Equals("Malaria") || hediffWithComps.def.defName.Equals("SleepingSickness"))
                         {
-                            var severity = hediffWithComps.Severity;
-                            var immunity = colonist.health.immunity.GetImmunity(hediffWithComps.def);
-                            var basehealth = pawnStats.HealthDisease - (severity - immunity / 4) - 0.25f;
+                            float severity = hediffWithComps.Severity;
+                            float immunity = colonist.health.immunity.GetImmunity(hediffWithComps.def);
+                            float basehealth = pawnStats.HealthDisease - (severity - immunity / 4) - 0.25f;
                             pawnStats.HasLifeThreateningDisease = true;
                             pawnStats.HealthDisease = basehealth;
                         }
@@ -499,10 +505,10 @@ namespace PSI
                 int i;
                 for (i = 0; i < colonist.needs.mood.thoughts.Thoughts.Count; i++)
                 {
-                    var thoughtDef = colonist.needs.mood.thoughts.Thoughts[i];
+                    Thought thoughtDef = colonist.needs.mood.thoughts.Thoughts[i];
                     if (thoughtDef.CurStage != null)
                     {
-                        var thoughtStage = thoughtDef.CurStage;
+                        ThoughtStage thoughtStage = thoughtDef.CurStage;
 
                         if (thoughtDef.def.defName.Equals("Crowded"))
                         {
@@ -567,7 +573,7 @@ namespace PSI
             if (!_inGame || !_iconsEnabled)
                 return;
 
-            foreach (var pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
+            foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
                                                                               //               foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned) //.FreeColonistsAndPrisoners)
             {
                 if (pawn.SelectableNow() && !pawn.Dead && !pawn.DestroyedOrNull() && pawn.Name.IsValid)
@@ -586,21 +592,23 @@ namespace PSI
 
         public void UpdateOptionsDialog()
         {
-            var dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
-            var optionsOpened = dialogOptions != null;
+            Dialog_Options dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
+            bool optionsOpened = dialogOptions != null;
             bool psiSettingsShowed = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
             if (optionsOpened && psiSettingsShowed)
             {
                 _settingsDialog.OptionsDialog = dialogOptions;
+                if (_inGame)
+                {                    
                 RecalcIconPositions();
+                }
                 return;
             }
-            if (optionsOpened)
+            if (optionsOpened && !psiSettingsShowed)
             {
                 if (!_settingsDialog.CloseButtonClicked)
                 {
                     Find.UIRoot.windows.Add(_settingsDialog);
-                    //   Find.UIRoot.windows.Add(_settingsDialog);
                     _settingsDialog.Page = "main";
                     return;
                 }
@@ -608,35 +616,16 @@ namespace PSI
             }
             else
             {
-                if (psiSettingsShowed)
+                if (!optionsOpened && psiSettingsShowed)
                 {
                     _settingsDialog.Close(false);
                     return;
                 }
-                _settingsDialog.CloseButtonClicked = false;
+                if (!optionsOpened && !psiSettingsShowed)
+                {
+                    _settingsDialog.CloseButtonClicked = false;
+                }
             }
-            // if (optionsOpened && !psiSettingsShowed)
-            // {
-            //     if (!_settingsDialog.CloseButtonClicked)
-            //     {
-            //         Find.UIRoot.windows.Add(_settingsDialog);
-            //         _settingsDialog.Page = "main";
-            //         return;
-            //     }
-            //     dialogOptions.Close(true);
-            // }
-            // else
-            // {
-            //     if (!optionsOpened && psiSettingsShowed)
-            //     {
-            //         _settingsDialog.Close(false);
-            //         return;
-            //     }
-            //     if (!optionsOpened && !psiSettingsShowed)
-            //     {
-            //         _settingsDialog.CloseButtonClicked = false;
-            //     }
-            // }
         }
 
         #endregion
@@ -645,52 +634,51 @@ namespace PSI
 
         private static void DrawAnimalIcons(Pawn animal)
         {
-            var transparancy = Settings.IconOpacity;
-            var colorRedAlert = new Color(1f, 0f, 0f, transparancy);
+            float transparancy = Settings.IconOpacity;
+            Color colorRedAlert = new Color(1f, 0f, 0f, transparancy);
 
             if (animal.Dead || animal.holder != null)
                 return;
-            var drawPos = animal.DrawPos;
+            Vector3 drawPos = animal.DrawPos;
 
-            if (!Settings.ShowAggressive ||
-                animal.MentalStateDef != MentalStateDefOf.Berserk && animal.MentalStateDef != MentalStateDefOf.Manhunter)
+            if (!Settings.ShowAggressive || animal.MentalStateDef != MentalStateDefOf.Berserk && animal.MentalStateDef != MentalStateDefOf.Manhunter)
                 return;
-            var bodyPos = drawPos;
+            Vector3 bodyPos = drawPos;
             DrawIcon(bodyPos, 0, Icons.Aggressive, colorRedAlert);
         }
 
         private static void DrawColonistIcons(Pawn colonist)
         {
-            var opacity = Settings.IconOpacity;
+            float opacity = Settings.IconOpacity;
 
-            var opacityCritical = Settings.IconOpacityCritical;
+            float opacityCritical = Settings.IconOpacityCritical;
 
-            var color25To21 = new Color(0.8f, 0f, 0f, opacity);
+            Color color25To21 = new Color(0.8f, 0f, 0f, opacity);
 
-            var color20To16 = new Color(0.9f, 0.45f, 0f, opacity);
+            Color color20To16 = new Color(0.9f, 0.45f, 0f, opacity);
 
-            var color15To11 = new Color(0.95f, 0.95f, 0f, opacity);
+            Color color15To11 = new Color(0.95f, 0.95f, 0f, opacity);
 
-            var color10To06 = new Color(0.95f, 0.95f, 0.66f, opacity);
+            Color color10To06 = new Color(0.95f, 0.95f, 0.66f, opacity);
 
-            var color05AndLess = new Color(0.9f, 0.9f, 0.9f, opacity);
+            Color color05AndLess = new Color(0.9f, 0.9f, 0.9f, opacity);
 
-            var colorMoodBoost = new Color(0f, 0.8f, 0f, opacity);
+            Color colorMoodBoost = new Color(0f, 0.8f, 0f, opacity);
 
-            var colorNeutralStatus = color05AndLess; // new Color(1f, 1f, 1f, transparancy);
+            Color colorNeutralStatus = color05AndLess; // new Color(1f, 1f, 1f, transparancy);
 
-            var colorNeutralStatusSolid = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, 0.5f + opacity * 0.2f);
+            Color colorNeutralStatusSolid = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, 0.5f + opacity * 0.2f);
 
-            var colorNeutralStatusFade = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, opacity / 4);
+            Color colorNeutralStatusFade = new Color(colorNeutralStatus.r, colorNeutralStatus.g, colorNeutralStatus.b, opacity / 4);
 
 
-            var colorHealthBarGreen = new Color(0f, 0.8f, 0f, opacity * 0.5f);
+            Color colorHealthBarGreen = new Color(0f, 0.8f, 0f, opacity * 0.5f);
 
-            var colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, opacityCritical + (1 - opacityCritical) * opacity);
+            Color colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, opacityCritical + (1 - opacityCritical) * opacity);
 
-            var colorOrangeAlert = new Color(color20To16.r, color20To16.g, color20To16.b, opacityCritical + (1 - opacityCritical) * opacity);
+            Color colorOrangeAlert = new Color(color20To16.r, color20To16.g, color20To16.b, opacityCritical + (1 - opacityCritical) * opacity);
 
-            var colorYellowAlert = new Color(color15To11.r, color15To11.g, color15To11.b, opacityCritical + (1 - opacityCritical) * opacity);
+            Color colorYellowAlert = new Color(color15To11.r, color15To11.g, color15To11.b, opacityCritical + (1 - opacityCritical) * opacity);
 
             int iconNum = 0;
 
@@ -699,15 +687,15 @@ namespace PSI
                 colonist.drafter == null || colonist.skills == null)
                 return;
 
-            var bodyLoc = colonist.DrawPos;
+            Vector3 bodyLoc = colonist.DrawPos;
 
             // Target Point 
             if (Settings.ShowTargetPoint && (pawnStats.TargetPos != Vector3.zero))
             {
                 if (Settings.UseColoredTarget)
                 {
-                    var skinColor = colonist.story.SkinColor;
-                    var hairColor = colonist.story.hairColor;
+                    Color skinColor = colonist.story.SkinColor;
+                    Color hairColor = colonist.story.hairColor;
                     DrawIcon_posOffset(pawnStats.TargetPos, Vector3.zero, Icons.TargetSkin, new Color(skinColor.r, skinColor.g, skinColor.b, 0.5f + opacity * 0.2f));
                     DrawIcon_posOffset(pawnStats.TargetPos, Vector3.zero, Icons.TargetHair, new Color(hairColor.r, hairColor.g, hairColor.b, 0.5f + opacity * 0.2f)); ;
                 }
@@ -787,7 +775,7 @@ namespace PSI
             //Health
             if (Settings.ShowHealth)
             {
-                var pawnHealth = colonist.health.summaryHealth.SummaryHealthPercent;
+                float pawnHealth = colonist.health.summaryHealth.SummaryHealthPercent;
                 //Infection
                 if (pawnStats.HasLifeThreateningDisease)
                 {
@@ -920,7 +908,7 @@ namespace PSI
             // Apparel
             if (Settings.ShowApparelHealth && pawnStats.ApparelHealth < (double)Settings.LimitApparelHealthLess)
             {
-                var pawnApparelHealth = pawnStats.ApparelHealth / (double)Settings.LimitApparelHealthLess;
+                double pawnApparelHealth = pawnStats.ApparelHealth / (double)Settings.LimitApparelHealthLess;
                 DrawIcon_FadeRedAlertToNeutral(bodyLoc, iconNum++, Icons.ApparelHealth, (float)pawnApparelHealth);
             }
 
