@@ -50,7 +50,7 @@ namespace PSI
             if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
-                var path = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Presets/Complete/";
+                var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Complete/";
                 if (Directory.Exists(path))
                     strArray = Directory.GetFiles(path, "*.cfg");
                 var options = new List<FloatMenuOption>();
@@ -99,7 +99,7 @@ namespace PSI
             if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
-                var path = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Presets/Sensitivity/";
+                var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Sensitivity/";
                 if (Directory.Exists(path))
                     strArray = Directory.GetFiles(path, "*.cfg");
                 var options = new List<FloatMenuOption>();
@@ -230,7 +230,7 @@ namespace PSI
             if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
-                var path = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Presets/Position/";
+                var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Position/";
                 if (Directory.Exists(path))
                     strArray = Directory.GetFiles(path, "*.cfg");
                 var options = new List<FloatMenuOption>();

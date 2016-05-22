@@ -66,7 +66,7 @@ namespace PSI
             {
                 Materials = new Materials(Settings.IconSet);
                 ModSettings modSettings =
-                    XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                    XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
                 Settings.IconSizeMult = modSettings.IconSizeMult;
                 Materials.ReloadTextures(true);
             }
@@ -78,8 +78,8 @@ namespace PSI
 
         public static ModSettings LoadSettings(string path = "psi-settings.cfg")
         {
-            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/" + path, true);
-            string path2 = GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/Textures/UI/Overlays/PawnStateIcons/";
+            ModSettings result = XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/" + path, true);
+            string path2 = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/";
             if (Directory.Exists(path2))
             {
                 IconSets = Directory.GetDirectories(path2);
@@ -93,7 +93,7 @@ namespace PSI
 
         public static void SaveSettings(string path = "psi-settings.cfg")
         {
-            XmlSaver.SaveDataObject(Settings, GenFilePaths.CoreModsFolderPath + "/Pawn State Icons/" + path);
+            XmlSaver.SaveDataObject(Settings, GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/" + path);
         }
 
         public virtual void OnGUI()
