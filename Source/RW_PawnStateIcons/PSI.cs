@@ -8,21 +8,18 @@ using Verse.AI;
 
 namespace PSI
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    // ReSharper disable once InconsistentNaming
+
     internal class PSI : MonoBehaviour
     {
         private static double _fDelta;
 
         private static bool _inGame;
 
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private static Dictionary<Pawn, PawnStats> _statsDict = new Dictionary<Pawn, PawnStats>();
 
         private static bool _iconsEnabled = true;
 
-        // ReSharper disable once FieldCanBeMadeReadOnly.Local
-        private static Dialog_Settings _settingsDialog = new Dialog_Settings();
+   //     private static Dialog_Settings _settingsDialog = new Dialog_Settings();
 
         public static ModSettings Settings = new ModSettings();
 
@@ -98,11 +95,11 @@ namespace PSI
 
         public virtual void OnGUI()
         {
-                 if (_inGame && Find.TickManager.Paused)
-                     UpdateOptionsDialog();
-
-                 if (!_inGame)
-                     UpdateOptionsDialog();
+           //    if (_inGame && Find.TickManager.Paused)
+           //        UpdateOptionsDialog();
+           //
+           //    if (!_inGame)
+           //        UpdateOptionsDialog();
 
             //     if (!_inGame || Find.TickManager.Paused))
             //         UpdateOptionsDialog();
@@ -590,43 +587,43 @@ namespace PSI
             }
         }
 
-        public void UpdateOptionsDialog()
-        {
-            Dialog_Options dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
-            bool optionsOpened = dialogOptions != null;
-            bool psiSettingsShowed = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
-            if (optionsOpened && psiSettingsShowed)
-            {
-                _settingsDialog.OptionsDialog = dialogOptions;
-                if (_inGame)
-                {                    
-                RecalcIconPositions();
-                }
-                return;
-            }
-            if (optionsOpened && !psiSettingsShowed)
-            {
-                if (!_settingsDialog.CloseButtonClicked)
-                {
-                    Find.UIRoot.windows.Add(_settingsDialog);
-                    _settingsDialog.Page = "main";
-                    return;
-                }
-                dialogOptions.Close(true);
-            }
-            else
-            {
-                if (!optionsOpened && psiSettingsShowed)
-                {
-                    _settingsDialog.Close(false);
-                    return;
-                }
-                if (!optionsOpened && !psiSettingsShowed)
-                {
-                    _settingsDialog.CloseButtonClicked = false;
-                }
-            }
-        }
+   //   public void UpdateOptionsDialog()
+   //   {
+   //       Dialog_Options dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
+   //       bool optionsOpened = dialogOptions != null;
+   //       bool psiSettingsShowed = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
+   //       if (optionsOpened && psiSettingsShowed)
+   //       {
+   //           _settingsDialog.OptionsDialog = dialogOptions;
+   //           if (_inGame)
+   //           {                    
+   //           RecalcIconPositions();
+   //           }
+   //           return;
+   //       }
+   //       if (optionsOpened && !psiSettingsShowed)
+   //       {
+   //           if (!_settingsDialog.CloseButtonClicked)
+   //           {
+   //               Find.UIRoot.windows.Add(_settingsDialog);
+   //               _settingsDialog.Page = "main";
+   //               return;
+   //           }
+   //           dialogOptions.Close(true);
+   //       }
+   //       else
+   //       {
+   //           if (!optionsOpened && psiSettingsShowed)
+   //           {
+   //               _settingsDialog.Close(false);
+   //               return;
+   //           }
+   //           if (!optionsOpened && !psiSettingsShowed)
+   //           {
+   //               _settingsDialog.CloseButtonClicked = false;
+   //           }
+   //       }
+   //   }
 
         #endregion
 
@@ -674,7 +671,10 @@ namespace PSI
 
             Color colorHealthBarGreen = new Color(0f, 0.8f, 0f, opacity * 0.5f);
 
-            Color colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, opacityCritical + (1 - opacityCritical) * opacity);
+            Color colorRedAlert =  PSI.Settings.ColorRedAlert;
+
+            colorRedAlert.a = opacityCritical + (1 - opacityCritical)*opacity;
+//            Color colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, opacityCritical + (1 - opacityCritical) * opacity);
 
             Color colorOrangeAlert = new Color(color20To16.r, color20To16.g, color20To16.b, opacityCritical + (1 - opacityCritical) * opacity);
 
@@ -884,10 +884,10 @@ namespace PSI
                 DrawIcon(bodyLoc, iconNum++, Icons.Love, colorYellowAlert);
             }
 
-            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotSomeLovin")))
-            {
-                DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
-            }
+      //    if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotSomeLovin")))
+      //    {
+      //        DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
+      //    }
 
             if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotMarried")))
             {
@@ -1124,10 +1124,10 @@ namespace PSI
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
                 }
 
-                if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
-                }
+          //    if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
+          //    {
+          //        DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
+          //    }
 
                 if (Settings.ShowRoomStatus && pawnStats.CrowdedMoodLevel != 0)
                 {

@@ -1,5 +1,5 @@
-C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\bin\Debug\Pawn State Icons.dll
-C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\bin\Debug\Pawn State Icons.pdb
 C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.csprojResolveAssemblyReference.cache
-C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\Pawn State Icons.dll
-C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\Pawn State Icons.pdb
+C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\bin\Debug\RW_PawnStateIcons.dll
+C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\bin\Debug\RW_PawnStateIcons.pdb
+C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.dll
+C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.pdb

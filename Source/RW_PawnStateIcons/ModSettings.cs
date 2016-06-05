@@ -59,8 +59,6 @@ namespace PSI
         public float IconOpacity = 0.7f;
         public float IconOpacityCritical = 0.6f;
         public bool UseColoredTarget = true;
-
-        public Color IconColorCritical;
-
+        public Color ColorRedAlert = new Color(0.8f, 0, 0, 1);
     }
 }

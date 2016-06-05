@@ -1,34 +1,127 @@
-﻿using System;
+﻿using CommunityCoreLibrary;
+using CommunityCoreLibrary.UI;
+using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using CommunityCoreLibrary.ColorPicker;
-using RimWorld;
+using System.Linq;
+using System.Text;
+using CommunityCoreLibrary.MiniMap;
 using UnityEngine;
 using Verse;
 
 namespace PSI
 {
-    // ReSharper disable once InconsistentNaming
-    internal class Dialog_Settings : Window
+    public class ModConfigMenu : ModConfigurationMenu
     {
-
         #region Fields
 
         public string Page = "main";
-        public bool CloseButtonClicked = true;
+        //       public bool CloseButtonClicked = true;
         public Window OptionsDialog;
 
         #endregion
 
         #region Methods
 
-        public Dialog_Settings()
+        public override float DoWindowContents(Rect inRect)
         {
-            closeOnEscapeKey = false;
-            doCloseButton = false;
-            doCloseX = true;
-            absorbInputAroundWindow = false;
-            forcePause = false;
+            float curY = 0f;
+
+            inRect.xMin += 5f;
+            inRect.width -= 10f;
+
+            Rect headerRect = inRect;
+            Rect headerRect2 = inRect;
+
+            var headerListing = new Listing_Standard(headerRect);
+
+            //       DoHeading(listing, "Pawn State Icons", false);
+
+            headerListing.OverrideColumnWidth = inRect.width / 2 - 10f;
+
+            FillPageMain(headerListing);
+
+            headerListing.End();
+
+            curY += headerListing.CurHeight;
+
+
+            headerRect2.yMin += curY;
+            var listinghead = new Listing_Standard(headerRect2);
+            listinghead.OverrideColumnWidth = headerListing.ColumnWidth();
+            FillPageMain2(listinghead);
+
+            listinghead.End();
+
+            curY += listinghead.CurHeight;
+
+            curY += 15f;
+
+            Rect contentRect = inRect;
+            contentRect.yMin += curY;
+
+            var listing2 = new Listing_Standard(contentRect);
+
+            if (Page == "showhide")
+            {
+                FillPageShowHide(listing2, contentRect.width);
+                curY += 27 * 30f;
+            }
+            else if (Page == "opacityandcolor")
+            {
+                FillPageOpacityAndColor(listing2, contentRect.width);
+                curY += 15 * 30f;
+            }
+            else if (Page == "arrange")
+            {
+                FillPageArrangement(listing2, contentRect.width);
+                curY += 10 * 30f;
+            }
+            else if (Page == "limits")
+            {
+                FillPageLimits(listing2, contentRect.width);
+                curY += 14 * 30f;
+            }
+            listing2.End();
+
+            return curY;
+        }
+
+        public static void DoCheckbox(Rect rect, ref bool value, string labelKey, string tipKey)
+        {
+            GameFont font = Text.Font;
+            TextAnchor anchor = Text.Anchor;
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            string text = Translator.Translate(labelKey);
+            Vector2 vector = new Vector2(rect.x, rect.y + (rect.height - 24f) / 2f);
+            float x = Text.CalcSize(text).x;
+            Rect rect2 = new Rect(rect.x + 24f + 4f, rect.y, x, rect.height);
+            Widgets.Checkbox(vector, ref value, 24f, false);
+            DoLabel(rect2, text, Translator.Translate(tipKey));
+            Text.Anchor = anchor;
+            Text.Font = font;
+        }
+
+        public static void DoLabel(Rect rect, string label, string tipText = "")
+        {
+            GameFont font = Text.Font;
+            TextAnchor anchor = Text.Anchor;
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            if (!GenText.NullOrEmpty(tipText))
+            {
+                Widgets.DrawHighlightIfMouseover(rect);
+                if (Mouse.IsOver(rect))
+                {
+                    GUI.DrawTexture(rect, TexUI.HighlightTex);
+                }
+                TooltipHandler.TipRegion(rect, tipText);
+            }
+            Widgets.Label(rect, label);
+            Text.Anchor = anchor;
+            Text.Font = font;
         }
 
         private void DoHeading(Listing_Standard listing, string translatorKey, bool translate = true)
@@ -55,6 +148,7 @@ namespace PSI
                 }
                 Find.WindowStack.Add(new FloatMenu(options));
             }
+            listing.NewColumn();
 
             if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
             {
@@ -83,15 +177,30 @@ namespace PSI
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
+        }
+
+        private void FillPageMain2(Listing_Standard listing)
+        {
+
+
             listing.DoGap();
+            listing.OverrideColumnWidth = listing.ColumnWidth() * 2;
 
             DoHeading(listing, "PSI.Settings.Advanced");
+
+            listing.OverrideColumnWidth = listing.ColumnWidth() / 2;
+
 
             if (listing.DoTextButton("PSI.Settings.VisibilityButton".Translate()))
                 Page = "showhide";
 
             if (listing.DoTextButton("PSI.Settings.OpacityAndColorButton".Translate()))
                 Page = "opacityandcolor";
+
+            listing.NewColumn();
+            DoHeading(listing, "");
+            listing.DoGap();
+
 
             if (listing.DoTextButton("PSI.Settings.ArrangementButton".Translate()))
                 Page = "arrange";
@@ -102,8 +211,10 @@ namespace PSI
             Page = "limits";
         }
 
-        private void FillPageLimits(Listing_Standard listing)
+        private void FillPageLimits(Listing_Standard listing, float columnwidth)
         {
+            listing.OverrideColumnWidth = columnwidth;
+
             DoHeading(listing, "PSI.Settings.Sensitivity.Header");
             if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
             {
@@ -162,15 +273,23 @@ namespace PSI
             listing.DoLabel("PSI.Settings.Sensitivity.Temperature".Translate() + (int)PSI.Settings.LimitTempComfortOffset + "C");
             PSI.Settings.LimitTempComfortOffset = listing.DoSlider(PSI.Settings.LimitTempComfortOffset, -10f, 10f);
 
-            if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
-                return;
-
-            Page = "main";
+            //  if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
+            //      return;
+            //
+            //  Page = "main";
         }
 
-        private void FillPageOpacityAndColor(Listing_Standard listing)
+        private LabeledInput_Color colorInput;
+
+        public Color color = PSI.Settings.ColorRedAlert;
+
+
+
+        private void FillPageOpacityAndColor(Listing_Standard listing, float columnwidth)
         {
+            listing.OverrideColumnWidth = columnwidth;
             DoHeading(listing, "PSI.Settings.IconOpacityAndColor.Header");
+
             listing.DoLabel("PSI.Settings.IconOpacityAndColor.Opacity".Translate());
             PSI.Settings.IconOpacity = listing.DoSlider(PSI.Settings.IconOpacity, 0.05f, 1f);
 
@@ -180,62 +299,75 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
 
 
+            Rect row = new Rect(0f, listing.CurHeight, listing.ColumnWidth(), 24f);
+
+            colorInput = new LabeledInput_Color(color, "MiniMap.CP.Color".Translate(), "MiniMap.CP.ColorTip".Translate());
+
+            colorInput.Draw(row);
+
+         //   Log.Error(colorInput.Value.ToString());
+       //     Log.Error(color.ToString());
+
+            // PSI.Settings.ColorRedAlert = colorInput.Value;
+            color = colorInput.Value;
+            PSI.Settings.ColorRedAlert = colorInput.Value;
+            PSI.SaveSettings();
+
+            listing.DoGap();
+            listing.DoGap();
+
+
             listing.DoLabel("Custom color settings coming from CCL in future");
 
-
-
-            if (listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
-                Page = "main";
+            //  if (listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
+            //      Page = "main";
         }
 
-        private void FillPageShowHide(Listing_Standard listing)
+        private void FillPageShowHide(Listing_Standard listing, float columnwidth)
         {
-            listing.OverrideColumnWidth = 230f;
+
+            listing.OverrideColumnWidth = columnwidth;
             DoHeading(listing, "PSI.Settings.Visibility.Header");
-            listing.OverrideColumnWidth = 95f;
             listing.DoLabelCheckbox("PSI.Settings.Visibility.TargetPoint".Translate(), ref PSI.Settings.ShowTargetPoint);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Aggressive".Translate(), ref PSI.Settings.ShowAggressive);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Dazed".Translate(), ref PSI.Settings.ShowDazed);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Leave".Translate(), ref PSI.Settings.ShowLeave);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Draft".Translate(), ref PSI.Settings.ShowDraft);
+            //
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Idle".Translate(), ref PSI.Settings.ShowIdle);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Unarmed".Translate(), ref PSI.Settings.ShowUnarmed);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Hungry".Translate(), ref PSI.Settings.ShowHungry);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Sad".Translate(), ref PSI.Settings.ShowSad);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Tired".Translate(), ref PSI.Settings.ShowTired);
+            //
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Sickness".Translate(), ref PSI.Settings.ShowDisease);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.NightOwl".Translate(), ref PSI.Settings.ShowNightOwl);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Greedy".Translate(), ref PSI.Settings.ShowGreedy);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Jealous".Translate(), ref PSI.Settings.ShowJealous);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Lovers".Translate(), ref PSI.Settings.ShowLovers);
+            //
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Prosthophile".Translate(), ref PSI.Settings.ShowProsthophile);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Prosthophobe".Translate(), ref PSI.Settings.ShowProsthophobe);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Hralth".Translate(), ref PSI.Settings.ShowHealth);
-
-            // to do: sort, cleanup + translation
-
-            listing.OverrideColumnWidth = 230f;
-            if (listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
-                Page = "main";
-            listing.OverrideColumnWidth = 95f;
-            listing.NewColumn();
-            DoHeading(listing, " ", false);
-            DoHeading(listing, " ", false);
+            //
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Health".Translate(), ref PSI.Settings.ShowHealth);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Injury".Translate(), ref PSI.Settings.ShowEffectiveness);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Bloodloss".Translate(), ref PSI.Settings.ShowBloodloss);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Hot".Translate(), ref PSI.Settings.ShowHot);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Cold".Translate(), ref PSI.Settings.ShowCold);
+            //
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Naked".Translate(), ref PSI.Settings.ShowNaked);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Drunk".Translate(), ref PSI.Settings.ShowDrunk);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.ApparelHealth".Translate(), ref PSI.Settings.ShowApparelHealth);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Pacific".Translate(), ref PSI.Settings.ShowPacific);
         }
 
-        private void FillPageArrangement(Listing_Standard listing)
+        private void FillPageArrangement(Listing_Standard listing, float columnwidth)
         {
+            listing.OverrideColumnWidth = columnwidth;
+
             DoHeading(listing, "PSI.Settings.Arrangement.Header");
 
             if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
@@ -301,50 +433,20 @@ namespace PSI
 
             PSI.Settings.IconsInColumn = (int)listing.DoSlider(PSI.Settings.IconsInColumn, 1f, 7f);
 
-            if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
-                return;
-
-            Page = "main";
+            //   if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
+            //       return;
+            //
+            //   Page = "main";
         }
 
-        public override void DoWindowContents(Rect inRect)
-        {
-            if (OptionsDialog == null)
-                return;
-
-            var rect = OptionsDialog.currentWindowRect;
-
-            currentWindowRect = new Rect(rect.xMax - 240f, rect.yMin, 240f, rect.height);
-
-            var listing = new Listing_Standard(inRect);
-
-            DoHeading(listing, "Pawn State Icons", false);
-
-            listing.OverrideColumnWidth = currentWindowRect.width;
-
-            if (Page == "showhide")
-                FillPageShowHide(listing);
-            else if (Page == "opacityandcolor")
-                FillPageOpacityAndColor(listing);
-            else if (Page == "arrange")
-                FillPageArrangement(listing);
-            else if (Page == "limits")
-                FillPageLimits(listing);
-            else
-                FillPageMain(listing);
-
-            listing.End();
-        }
-
-        public override void PreClose()
+        public override void ExposeData()
         {
             PSI.SaveSettings();
             PSI.Reinit();
-            CloseButtonClicked = true;
-            base.PreClose();
+
+            //          CloseButtonClicked = true;
         }
 
         #endregion
-
     }
 }

@@ -4,10 +4,10 @@
   <PSI.Disabled>Pawn State Icons disabled. Press F11 to reenable</PSI.Disabled>
   <PSI.Settings.IconSet>Icon set: </PSI.Settings.IconSet>
   <PSI.Settings.Advanced>Advanced</PSI.Settings.Advanced>
-  <PSI.Settings.VisibilityButton>Visibility...</PSI.Settings.VisibilityButton>
-  <PSI.Settings.OpacityAndColorButton>Opacity and color...</PSI.Settings.OpacityAndColorButton>
-  <PSI.Settings.ArrangementButton>Size and arrangement...</PSI.Settings.ArrangementButton>
-  <PSI.Settings.SensitivityButton>Sensitivity...</PSI.Settings.SensitivityButton>
+  <PSI.Settings.VisibilityButton>Visibility</PSI.Settings.VisibilityButton>
+  <PSI.Settings.OpacityAndColorButton>Opacity &amp; color</PSI.Settings.OpacityAndColorButton>
+  <PSI.Settings.ArrangementButton>Size &amp; arrangement</PSI.Settings.ArrangementButton>
+  <PSI.Settings.SensitivityButton>Sensitivity</PSI.Settings.SensitivityButton>
 
   <PSI.Settings.LoadPresetButton>Load preset</PSI.Settings.LoadPresetButton>
   <PSI.Settings.LoadPreset.UnableToLoad>Unable to load preset: </PSI.Settings.LoadPreset.UnableToLoad>
