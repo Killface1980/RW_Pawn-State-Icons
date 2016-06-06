@@ -12,9 +12,11 @@ using Verse;
 
 namespace PSI
 {
-    public class ModConfigMenu : ModConfigurationMenu
+    public class ModConfigMenu : ModConfigurationMenu, IConfigurable
     {
         #region Fields
+
+        public static ModSettings baseSettings = new ModSettings();
 
         public string Page = "main";
         //       public bool CloseButtonClicked = true;
@@ -279,11 +281,25 @@ namespace PSI
             //  Page = "main";
         }
 
-        private LabeledInput_Color colorInput;
+        public LabeledInput_Color colorInput;
 
         public Color color = PSI.Settings.ColorRedAlert;
 
+        public float DrawMCMRegion(Rect InRect)
+        {
+            Rect row = InRect;
+            row.height = 24f;
 
+            colorInput.Draw(row);
+            color = colorInput.Value;
+
+            return 30f;
+        }
+
+        public ModConfigMenu()
+        {
+            colorInput = new LabeledInput_Color(color, "MiniMap.ViewPort.Color".Translate(), "MiniMap.ViewPort.ColorTip".Translate());
+        }
 
         private void FillPageOpacityAndColor(Listing_Standard listing, float columnwidth)
         {
@@ -297,21 +313,22 @@ namespace PSI
             PSI.Settings.IconOpacityCritical = listing.DoSlider(PSI.Settings.IconOpacityCritical, 0f, 1f);
 
             listing.DoLabelCheckbox("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
+            listing.DoGap();
 
+            color = colorInput.Value;
+
+            if (listing.DoTextButton("PSI.Settings.ResetColors".Translate()))
+            {
+                color = baseSettings.ColorRedAlert;
+                Scribe_Values.LookValue(ref color, "color");
+                colorInput.Value = color;
+            }
 
             Rect row = new Rect(0f, listing.CurHeight, listing.ColumnWidth(), 24f);
 
-            colorInput = new LabeledInput_Color(color, "MiniMap.CP.Color".Translate(), "MiniMap.CP.ColorTip".Translate());
+            DrawMCMRegion(row);
 
-            colorInput.Draw(row);
-
-         //   Log.Error(colorInput.Value.ToString());
-       //     Log.Error(color.ToString());
-
-            // PSI.Settings.ColorRedAlert = colorInput.Value;
-            color = colorInput.Value;
             PSI.Settings.ColorRedAlert = colorInput.Value;
-            PSI.SaveSettings();
 
             listing.DoGap();
             listing.DoGap();
@@ -433,6 +450,9 @@ namespace PSI
 
             PSI.Settings.IconsInColumn = (int)listing.DoSlider(PSI.Settings.IconsInColumn, 1f, 7f);
 
+            PSI.SaveSettings();
+            PSI.Reinit();
+
             //   if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
             //       return;
             //
@@ -443,8 +463,11 @@ namespace PSI
         {
             PSI.SaveSettings();
             PSI.Reinit();
-
             //          CloseButtonClicked = true;
+            Scribe_Values.LookValue(ref color, "color");
+
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+                colorInput.Value = color;
         }
 
         #endregion
