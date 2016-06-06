@@ -12,7 +12,7 @@ using Verse;
 
 namespace PSI
 {
-    public class ModConfigMenu : ModConfigurationMenu, IConfigurable
+    public class ModConfigMenu : ModConfigurationMenu, IExposable
     {
         #region Fields
 
@@ -73,17 +73,17 @@ namespace PSI
             else if (Page == "opacityandcolor")
             {
                 FillPageOpacityAndColor(listing2, contentRect.width);
-                curY += 15 * 30f;
+                curY += 10 * 30f;
             }
             else if (Page == "arrange")
             {
                 FillPageArrangement(listing2, contentRect.width);
-                curY += 10 * 30f;
+                curY += 15 * 30f;
             }
             else if (Page == "limits")
             {
                 FillPageLimits(listing2, contentRect.width);
-                curY += 14 * 30f;
+                curY += 18 * 30f;
             }
             listing2.End();
 
@@ -283,7 +283,7 @@ namespace PSI
 
         public LabeledInput_Color colorInput;
 
-        public Color color = PSI.Settings.ColorRedAlert;
+        public Color colorRedAlert = PSI.Settings.ColorRedAlert;
 
         public float DrawMCMRegion(Rect InRect)
         {
@@ -291,14 +291,14 @@ namespace PSI
             row.height = 24f;
 
             colorInput.Draw(row);
-            color = colorInput.Value;
+            colorRedAlert = colorInput.Value;
 
             return 30f;
         }
 
         public ModConfigMenu()
         {
-            colorInput = new LabeledInput_Color(color, "MiniMap.ViewPort.Color".Translate(), "MiniMap.ViewPort.ColorTip".Translate());
+            colorInput = new LabeledInput_Color(colorRedAlert, "MiniMap.ViewPort.Color".Translate(), "MiniMap.ViewPort.ColorTip".Translate());
         }
 
         private void FillPageOpacityAndColor(Listing_Standard listing, float columnwidth)
@@ -315,23 +315,24 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
             listing.DoGap();
 
-            color = colorInput.Value;
+            colorRedAlert = colorInput.Value;
 
-            if (listing.DoTextButton("PSI.Settings.ResetColors".Translate()))
-            {
-                color = baseSettings.ColorRedAlert;
-                Scribe_Values.LookValue(ref color, "color");
-                colorInput.Value = color;
-            }
-
-            Rect row = new Rect(0f, listing.CurHeight, listing.ColumnWidth(), 24f);
-
-            DrawMCMRegion(row);
-
-            PSI.Settings.ColorRedAlert = colorInput.Value;
-
-            listing.DoGap();
-            listing.DoGap();
+          //if (listing.DoTextButton("PSI.Settings.ResetColors".Translate()))
+          //{
+          //    colorRedAlert = baseSettings.ColorRedAlert;
+          //    Scribe_Values.LookValue(ref colorRedAlert, "colorRedAlert");
+          //    colorInput.Value = colorRedAlert;
+          //    PSI.SaveSettings();
+          //}
+          //
+          //Rect row = new Rect(0f, listing.CurHeight, listing.ColumnWidth(), 24f);
+          //
+          //DrawMCMRegion(row);
+          //
+          //PSI.Settings.ColorRedAlert = colorInput.Value;
+          //
+          //listing.DoGap();
+          //listing.DoGap();
 
 
             listing.DoLabel("Custom color settings coming from CCL in future");
@@ -358,6 +359,18 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Tired".Translate(), ref PSI.Settings.ShowTired);
             //
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Sickness".Translate(), ref PSI.Settings.ShowDisease);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Health".Translate(), ref PSI.Settings.ShowHealth);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Injury".Translate(), ref PSI.Settings.ShowEffectiveness);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Bloodloss".Translate(), ref PSI.Settings.ShowBloodloss);
+            //
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Hot".Translate(), ref PSI.Settings.ShowHot);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Cold".Translate(), ref PSI.Settings.ShowCold);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Naked".Translate(), ref PSI.Settings.ShowNaked);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Drunk".Translate(), ref PSI.Settings.ShowDrunk);
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.ApparelHealth".Translate(), ref PSI.Settings.ShowApparelHealth);
+            //
+            listing.DoLabelCheckbox("PSI.Settings.Visibility.Pacific".Translate(), ref PSI.Settings.ShowPacific);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.NightOwl".Translate(), ref PSI.Settings.ShowNightOwl);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Greedy".Translate(), ref PSI.Settings.ShowGreedy);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Jealous".Translate(), ref PSI.Settings.ShowJealous);
@@ -367,18 +380,6 @@ namespace PSI
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Prosthophobe".Translate(), ref PSI.Settings.ShowProsthophobe);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
             listing.DoLabelCheckbox("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
-            //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Health".Translate(), ref PSI.Settings.ShowHealth);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Injury".Translate(), ref PSI.Settings.ShowEffectiveness);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Bloodloss".Translate(), ref PSI.Settings.ShowBloodloss);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Hot".Translate(), ref PSI.Settings.ShowHot);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Cold".Translate(), ref PSI.Settings.ShowCold);
-            //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Naked".Translate(), ref PSI.Settings.ShowNaked);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Drunk".Translate(), ref PSI.Settings.ShowDrunk);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.ApparelHealth".Translate(), ref PSI.Settings.ShowApparelHealth);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Pacific".Translate(), ref PSI.Settings.ShowPacific);
         }
 
         private void FillPageArrangement(Listing_Standard listing, float columnwidth)
@@ -464,10 +465,12 @@ namespace PSI
             PSI.SaveSettings();
             PSI.Reinit();
             //          CloseButtonClicked = true;
-            Scribe_Values.LookValue(ref color, "color");
+            Scribe_Values.LookValue(ref colorRedAlert, "colorRedAlert");
 
-            if (Scribe.mode == LoadSaveMode.PostLoadInit)
-                colorInput.Value = color;
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                PSI.Reinit();
+            }
         }
 
         #endregion

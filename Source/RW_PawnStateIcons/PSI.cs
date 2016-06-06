@@ -19,7 +19,7 @@ namespace PSI
 
         private static bool _iconsEnabled = true;
 
-   //     private static Dialog_Settings _settingsDialog = new Dialog_Settings();
+        //     private static Dialog_Settings _settingsDialog = new Dialog_Settings();
 
         public static ModSettings Settings = new ModSettings();
 
@@ -38,6 +38,7 @@ namespace PSI
             Reinit();
         }
 
+
         public static void Reinit(bool reloadSettings = true, bool reloadIconSet = true, bool recalcIconPos = true)
         {
             _pawnCapacities = new[]
@@ -55,10 +56,11 @@ namespace PSI
                 PawnCapacityDefOf.Talking
             };
 
-            if (reloadSettings)
+            if (recalcIconPos)
             {
-                Settings = LoadSettings();
+                RecalcIconPositions();
             }
+
             if (reloadIconSet)
             {
                 Materials = new Materials(Settings.IconSet);
@@ -67,10 +69,7 @@ namespace PSI
                 Settings.IconSizeMult = modSettings.IconSizeMult;
                 Materials.ReloadTextures(true);
             }
-            if (recalcIconPos)
-            {
-                RecalcIconPositions();
-            }
+
         }
 
         public static ModSettings LoadSettings(string path = "psi-settings.cfg")
@@ -95,11 +94,11 @@ namespace PSI
 
         public virtual void OnGUI()
         {
-           //    if (_inGame && Find.TickManager.Paused)
-           //        UpdateOptionsDialog();
-           //
-           //    if (!_inGame)
-           //        UpdateOptionsDialog();
+            //    if (_inGame && Find.TickManager.Paused)
+            //        UpdateOptionsDialog();
+            //
+            //    if (!_inGame)
+            //        UpdateOptionsDialog();
 
             //     if (!_inGame || Find.TickManager.Paused))
             //         UpdateOptionsDialog();
@@ -571,7 +570,7 @@ namespace PSI
                 return;
 
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
-                                                                              //               foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned) //.FreeColonistsAndPrisoners)
+                                                                               //               foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned) //.FreeColonistsAndPrisoners)
             {
                 if (pawn.SelectableNow() && !pawn.Dead && !pawn.DestroyedOrNull() && pawn.Name.IsValid)
                 {
@@ -587,43 +586,43 @@ namespace PSI
             }
         }
 
-   //   public void UpdateOptionsDialog()
-   //   {
-   //       Dialog_Options dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
-   //       bool optionsOpened = dialogOptions != null;
-   //       bool psiSettingsShowed = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
-   //       if (optionsOpened && psiSettingsShowed)
-   //       {
-   //           _settingsDialog.OptionsDialog = dialogOptions;
-   //           if (_inGame)
-   //           {                    
-   //           RecalcIconPositions();
-   //           }
-   //           return;
-   //       }
-   //       if (optionsOpened && !psiSettingsShowed)
-   //       {
-   //           if (!_settingsDialog.CloseButtonClicked)
-   //           {
-   //               Find.UIRoot.windows.Add(_settingsDialog);
-   //               _settingsDialog.Page = "main";
-   //               return;
-   //           }
-   //           dialogOptions.Close(true);
-   //       }
-   //       else
-   //       {
-   //           if (!optionsOpened && psiSettingsShowed)
-   //           {
-   //               _settingsDialog.Close(false);
-   //               return;
-   //           }
-   //           if (!optionsOpened && !psiSettingsShowed)
-   //           {
-   //               _settingsDialog.CloseButtonClicked = false;
-   //           }
-   //       }
-   //   }
+        //   public void UpdateOptionsDialog()
+        //   {
+        //       Dialog_Options dialogOptions = Find.WindowStack.WindowOfType<Dialog_Options>();
+        //       bool optionsOpened = dialogOptions != null;
+        //       bool psiSettingsShowed = Find.WindowStack.IsOpen(typeof(Dialog_Settings));
+        //       if (optionsOpened && psiSettingsShowed)
+        //       {
+        //           _settingsDialog.OptionsDialog = dialogOptions;
+        //           if (_inGame)
+        //           {                    
+        //           RecalcIconPositions();
+        //           }
+        //           return;
+        //       }
+        //       if (optionsOpened && !psiSettingsShowed)
+        //       {
+        //           if (!_settingsDialog.CloseButtonClicked)
+        //           {
+        //               Find.UIRoot.windows.Add(_settingsDialog);
+        //               _settingsDialog.Page = "main";
+        //               return;
+        //           }
+        //           dialogOptions.Close(true);
+        //       }
+        //       else
+        //       {
+        //           if (!optionsOpened && psiSettingsShowed)
+        //           {
+        //               _settingsDialog.Close(false);
+        //               return;
+        //           }
+        //           if (!optionsOpened && !psiSettingsShowed)
+        //           {
+        //               _settingsDialog.CloseButtonClicked = false;
+        //           }
+        //       }
+        //   }
 
         #endregion
 
@@ -671,10 +670,10 @@ namespace PSI
 
             Color colorHealthBarGreen = new Color(0f, 0.8f, 0f, opacity * 0.5f);
 
-            Color colorRedAlert =  PSI.Settings.ColorRedAlert;
+            Color colorRedAlert = PSI.Settings.ColorRedAlert;
 
-            colorRedAlert.a = opacityCritical + (1 - opacityCritical)*opacity;
-//            Color colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, opacityCritical + (1 - opacityCritical) * opacity);
+            colorRedAlert.a = opacityCritical + (1 - opacityCritical) * opacity;
+            //            Color colorRedAlert = new Color(color25To21.r, color25To21.g, color25To21.b, opacityCritical + (1 - opacityCritical) * opacity);
 
             Color colorOrangeAlert = new Color(color20To16.r, color20To16.g, color20To16.b, opacityCritical + (1 - opacityCritical) * opacity);
 
@@ -884,10 +883,10 @@ namespace PSI
                 DrawIcon(bodyLoc, iconNum++, Icons.Love, colorYellowAlert);
             }
 
-      //    if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotSomeLovin")))
-      //    {
-      //        DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
-      //    }
+            //    if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotSomeLovin")))
+            //    {
+            //        DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
+            //    }
 
             if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotMarried")))
             {
@@ -1124,10 +1123,10 @@ namespace PSI
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
                 }
 
-          //    if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
-          //    {
-          //        DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
-          //    }
+                //    if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
+                //    {
+                //        DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
+                //    }
 
                 if (Settings.ShowRoomStatus && pawnStats.CrowdedMoodLevel != 0)
                 {

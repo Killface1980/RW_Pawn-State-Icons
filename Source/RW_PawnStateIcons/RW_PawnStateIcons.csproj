@@ -51,6 +51,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Presets\Complete\default.cfg">
+      <Link>Presets\Complete\default.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Complete\text.cfg">
+      <Link>Presets\Complete\text.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Position\Bottom Horizontal.cfg">
+      <Link>Presets\Position\Bottom Horizontal.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Position\Default %28Left%29.cfg">
+      <Link>Presets\Position\Default %28Left%29.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Position\Right.cfg">
+      <Link>Presets\Position\Right.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Position\Top.cfg">
+      <Link>Presets\Position\Top.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Sensitivity\Less Sensitive.cfg">
+      <Link>Presets\Sensitivity\Less Sensitive.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Sensitivity\More Sensitive.cfg">
+      <Link>Presets\Sensitivity\More Sensitive.cfg</Link>
+    </None>
+    <None Include="..\..\Presets\Sensitivity\Standard.cfg">
+      <Link>Presets\Sensitivity\Standard.cfg</Link>
+    </None>
     <None Include="Dialog_Settings.cs" />
     <Compile Include="Materials.cs" />
     <Compile Include="ModConfigMenu.cs" />
@@ -73,6 +100,12 @@
     </Content>
     <Content Include="..\..\Languages\English\Keyed\IconMod.xml">
       <Link>Translations\EN\IconMod.xml</Link>
+    </Content>
+    <Content Include="..\..\Languages\German\Keyed\IconMod.xml">
+      <Link>Translations\DE\IconMod.xml</Link>
+    </Content>
+    <Content Include="..\..\Languages\Russian\Keyed\IconMod.xml">
+      <Link>Translations\RU\IconMod.xml</Link>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
