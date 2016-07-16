@@ -42,6 +42,10 @@ namespace PSI
 
         public static void Reinit(bool reloadSettings = true, bool reloadIconSet = true, bool recalcIconPos = true)
         {
+
+
+
+
             _pawnCapacities = new[]
             {
                 PawnCapacityDefOf.BloodFiltration,
@@ -64,11 +68,15 @@ namespace PSI
 
             if (reloadIconSet)
             {
-                Materials = new Materials(Settings.IconSet);
-                ModSettings modSettings =
-                    XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
-                Settings.IconSizeMult = modSettings.IconSizeMult;
-                Materials.ReloadTextures(true);
+                LongEventHandler.ExecuteWhenFinished( () =>
+                {
+                    Materials = new Materials(Settings.IconSet);
+                    ModSettings modSettings =
+                        XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                    Settings.IconSizeMult = modSettings.IconSizeMult;
+                    Materials.ReloadTextures(true);
+                    Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                } );
             }
 
         }
