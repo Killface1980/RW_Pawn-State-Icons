@@ -5,6 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using System.Linq;
 
 namespace PSI
 {
@@ -376,10 +377,10 @@ namespace PSI
             pawnStats.TooCold = Mathf.Clamp(pawnStats.TooCold, 0f, 2f);
 
             pawnStats.TooHot = Mathf.Clamp(pawnStats.TooHot, 0f, 2f);
-
-            // Drunkness
-            pawnStats.Drunkness = DrugUtility.DrunknessPercent(colonist);
-
+            /*
+            // Drunkness - DEACTIVATED FOR NOW
+            pawnStats.Drunkness =  DrugUtility.DrunknessPercent(colonist);
+*/
             // Mental Sanity
             pawnStats.MentalSanity = null;
             if (colonist.mindState != null && colonist.InMentalState)
@@ -548,9 +549,10 @@ namespace PSI
             _statsDict[colonist] = pawnStats;
         }
 
-        public static bool HasMood(Pawn pawn, ThoughtDef tdef)
+        public static bool HasMood(Pawn pawn, Thought tdef)
         {
-            if (pawn.needs.mood.thoughts.DistinctThoughtDefs.Contains(tdef))
+            if (pawn.needs.mood.thoughts.Thoughts.Contains(tdef))
+   //             if (pawn.needs.mood.thoughts.DistinctThoughtDefs.Contains(tdef))
             {
                 return true;
             }
@@ -719,20 +721,20 @@ namespace PSI
                 // Berserk
                 if (Settings.ShowAggressive && pawnStats.MentalSanity == MentalStateDefOf.Berserk)
                     DrawIcon(bodyLoc, iconNum++, Icons.Aggressive, colorRedAlert);
-
-                // Binging on alcohol
+/*
+                // Binging on alcohol - needs refinement
                 if (Settings.ShowDrunk)
                 {
                     if (pawnStats.MentalSanity == MentalStateDefOf.BingingAlcohol)
                         DrawIcon(bodyLoc, iconNum++, Icons.Drunk, colorRedAlert);
                 }
-
+                */
                 // Give Up Exit
-                if (Settings.ShowLeave && pawnStats.MentalSanity == MentalStateDefOf.GiveUpExit)
+                if (Settings.ShowLeave && pawnStats.MentalSanity == MentalStateDefOf.PanicFlee) // was GiveUpExit
                     DrawIcon(bodyLoc, iconNum++, Icons.Leave, colorRedAlert);
 
                 //Daze Wander
-                if (Settings.ShowDazed && pawnStats.MentalSanity == MentalStateDefOf.DazedWander)
+                if (Settings.ShowDazed && pawnStats.MentalSanity == MentalStateDefOf.WanderSad) // + MentalStateDefOf.WanderPsychotic
                     DrawIcon(bodyLoc, iconNum++, Icons.Dazed, colorYellowAlert);
 
                 //PanicFlee
@@ -878,7 +880,7 @@ namespace PSI
 
 
             // Usage of bed ...
-            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("WantToSleepWithSpouseOrLover")))
+            if (Settings.ShowLovers && HasMood(colonist, new Thought_WantToSleepWithSpouseOrLover()))
             {
                 DrawIcon(bodyLoc, iconNum++, Icons.Love, colorYellowAlert);
             }
@@ -888,7 +890,9 @@ namespace PSI
             //        DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
             //    }
 
-            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotMarried")))
+            /*
+
+            if (Settings.ShowLovers && HasMood(colonist, GotMarried))
             {
                 DrawIcon(bodyLoc, iconNum++, Icons.Marriage, colorMoodBoost);
             }
@@ -1138,6 +1142,7 @@ namespace PSI
                         DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorOrangeAlert);
                 }
             }
+            */
         }
 
         #endregion

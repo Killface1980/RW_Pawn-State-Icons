@@ -40,7 +40,7 @@ namespace PSI
 
             //       DoHeading(listing, "Pawn State Icons", false);
 
-            headerListing.OverrideColumnWidth = inRect.width / 2 - 10f;
+            headerListing.ColumnWidth = inRect.width / 2 - 10f;
 
             FillPageMain(headerListing);
 
@@ -51,7 +51,7 @@ namespace PSI
 
             headerRect2.yMin += curY;
             var listinghead = new Listing_Standard(headerRect2);
-            listinghead.OverrideColumnWidth = headerListing.ColumnWidth();
+            listinghead.ColumnWidth = headerListing.ColumnWidth;
             FillPageMain2(listinghead);
 
             listinghead.End();
@@ -129,13 +129,13 @@ namespace PSI
         private void DoHeading(Listing_Standard listing, string translatorKey, bool translate = true)
         {
             Text.Font = GameFont.Medium;
-            listing.DoLabel(translate ? translatorKey.Translate() : translatorKey);
+            listing.Label(translate ? translatorKey.Translate() : translatorKey);
             Text.Font = GameFont.Small;
         }
 
         private void FillPageMain(Listing_Standard listing)
         {
-            if (listing.DoTextButton("PSI.Settings.IconSet".Translate() + PSI.Settings.IconSet))
+            if (listing.ButtonText("PSI.Settings.IconSet".Translate() + PSI.Settings.IconSet))
             {
                 var options = new List<FloatMenuOption>();
                 foreach (var str in PSI.IconSets)
@@ -152,7 +152,7 @@ namespace PSI
             }
             listing.NewColumn();
 
-            if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
+            if (listing.ButtonText("PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
                 var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Complete/";
@@ -185,29 +185,29 @@ namespace PSI
         {
 
 
-            listing.DoGap();
-            listing.OverrideColumnWidth = listing.ColumnWidth() * 2;
+            listing.Gap();
+            listing.ColumnWidth = listing.ColumnWidth * 2;
 
             DoHeading(listing, "PSI.Settings.Advanced");
 
-            listing.OverrideColumnWidth = listing.ColumnWidth() / 2;
+            listing.ColumnWidth = listing.ColumnWidth / 2;
 
 
-            if (listing.DoTextButton("PSI.Settings.VisibilityButton".Translate()))
+            if (listing.ButtonText("PSI.Settings.VisibilityButton".Translate()))
                 Page = "showhide";
 
-            if (listing.DoTextButton("PSI.Settings.OpacityAndColorButton".Translate()))
+            if (listing.ButtonText("PSI.Settings.OpacityAndColorButton".Translate()))
                 Page = "opacityandcolor";
 
             listing.NewColumn();
             DoHeading(listing, "");
-            listing.DoGap();
+            listing.Gap();
 
 
-            if (listing.DoTextButton("PSI.Settings.ArrangementButton".Translate()))
+            if (listing.ButtonText("PSI.Settings.ArrangementButton".Translate()))
                 Page = "arrange";
 
-            if (!listing.DoTextButton("PSI.Settings.SensitivityButton".Translate()))
+            if (!listing.ButtonText("PSI.Settings.SensitivityButton".Translate()))
                 return;
 
             Page = "limits";
@@ -215,10 +215,10 @@ namespace PSI
 
         private void FillPageLimits(Listing_Standard listing, float columnwidth)
         {
-            listing.OverrideColumnWidth = columnwidth;
+            listing.ColumnWidth = columnwidth;
 
             DoHeading(listing, "PSI.Settings.Sensitivity.Header");
-            if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
+            if (listing.ButtonText("PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
                 var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Sensitivity/";
@@ -252,28 +252,28 @@ namespace PSI
                 Find.WindowStack.Add(new FloatMenu(options));
             }
 
-            listing.DoGap();
+            listing.Gap();
 
-            listing.DoLabel("PSI.Settings.Sensitivity.Bleeding".Translate() + ("PSI.Settings.Sensitivity.Bleeding." + Math.Round(PSI.Settings.LimitBleedMult - 0.25)).Translate());
-            PSI.Settings.LimitBleedMult = listing.DoSlider(PSI.Settings.LimitBleedMult, 0.5f, 5f);
+            listing.Label("PSI.Settings.Sensitivity.Bleeding".Translate() + ("PSI.Settings.Sensitivity.Bleeding." + Math.Round(PSI.Settings.LimitBleedMult - 0.25)).Translate());
+            PSI.Settings.LimitBleedMult = listing.Slider(PSI.Settings.LimitBleedMult, 0.5f, 5f);
 
-            listing.DoLabel("PSI.Settings.Sensitivity.Injured".Translate() + (int)(PSI.Settings.LimitEfficiencyLess * 100.0) + "%");
-            PSI.Settings.LimitEfficiencyLess = listing.DoSlider(PSI.Settings.LimitEfficiencyLess, 0.01f, 0.99f);
+            listing.Label("PSI.Settings.Sensitivity.Injured".Translate() + (int)(PSI.Settings.LimitEfficiencyLess * 100.0) + "%");
+            PSI.Settings.LimitEfficiencyLess = listing.Slider(PSI.Settings.LimitEfficiencyLess, 0.01f, 0.99f);
 
-            listing.DoLabel("PSI.Settings.Sensitivity.Food".Translate() + (int)(PSI.Settings.LimitFoodLess * 100.0) + "%");
-            PSI.Settings.LimitFoodLess = listing.DoSlider(PSI.Settings.LimitFoodLess, 0.01f, 0.99f);
+            listing.Label("PSI.Settings.Sensitivity.Food".Translate() + (int)(PSI.Settings.LimitFoodLess * 100.0) + "%");
+            PSI.Settings.LimitFoodLess = listing.Slider(PSI.Settings.LimitFoodLess, 0.01f, 0.99f);
 
-            listing.DoLabel("PSI.Settings.Sensitivity.Mood".Translate() + (int)(PSI.Settings.LimitMoodLess * 100.0) + "%");
-            PSI.Settings.LimitMoodLess = listing.DoSlider(PSI.Settings.LimitMoodLess, 0.01f, 0.99f);
+            listing.Label("PSI.Settings.Sensitivity.Mood".Translate() + (int)(PSI.Settings.LimitMoodLess * 100.0) + "%");
+            PSI.Settings.LimitMoodLess = listing.Slider(PSI.Settings.LimitMoodLess, 0.01f, 0.99f);
 
-            listing.DoLabel("PSI.Settings.Sensitivity.Rest".Translate() + (int)(PSI.Settings.LimitRestLess * 100.0) + "%");
-            PSI.Settings.LimitRestLess = listing.DoSlider(PSI.Settings.LimitRestLess, 0.01f, 0.99f);
+            listing.Label("PSI.Settings.Sensitivity.Rest".Translate() + (int)(PSI.Settings.LimitRestLess * 100.0) + "%");
+            PSI.Settings.LimitRestLess = listing.Slider(PSI.Settings.LimitRestLess, 0.01f, 0.99f);
 
-            listing.DoLabel("PSI.Settings.Sensitivity.ApparelHealth".Translate() + (int)(PSI.Settings.LimitApparelHealthLess * 100.0) + "%");
-            PSI.Settings.LimitApparelHealthLess = listing.DoSlider(PSI.Settings.LimitApparelHealthLess, 0.01f, 0.99f);
+            listing.Label("PSI.Settings.Sensitivity.ApparelHealth".Translate() + (int)(PSI.Settings.LimitApparelHealthLess * 100.0) + "%");
+            PSI.Settings.LimitApparelHealthLess = listing.Slider(PSI.Settings.LimitApparelHealthLess, 0.01f, 0.99f);
 
-            listing.DoLabel("PSI.Settings.Sensitivity.Temperature".Translate() + (int)PSI.Settings.LimitTempComfortOffset + "C");
-            PSI.Settings.LimitTempComfortOffset = listing.DoSlider(PSI.Settings.LimitTempComfortOffset, -10f, 10f);
+            listing.Label("PSI.Settings.Sensitivity.Temperature".Translate() + (int)PSI.Settings.LimitTempComfortOffset + "C");
+            PSI.Settings.LimitTempComfortOffset = listing.Slider(PSI.Settings.LimitTempComfortOffset, -10f, 10f);
 
             //  if (!listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
             //      return;
@@ -303,17 +303,17 @@ namespace PSI
 
         private void FillPageOpacityAndColor(Listing_Standard listing, float columnwidth)
         {
-            listing.OverrideColumnWidth = columnwidth;
+            listing.ColumnWidth = columnwidth;
             DoHeading(listing, "PSI.Settings.IconOpacityAndColor.Header");
 
-            listing.DoLabel("PSI.Settings.IconOpacityAndColor.Opacity".Translate());
-            PSI.Settings.IconOpacity = listing.DoSlider(PSI.Settings.IconOpacity, 0.05f, 1f);
+            listing.Label("PSI.Settings.IconOpacityAndColor.Opacity".Translate());
+            PSI.Settings.IconOpacity = listing.Slider(PSI.Settings.IconOpacity, 0.05f, 1f);
 
-            listing.DoLabel("PSI.Settings.IconOpacityAndColor.OpacityCritical".Translate());
-            PSI.Settings.IconOpacityCritical = listing.DoSlider(PSI.Settings.IconOpacityCritical, 0f, 1f);
+            listing.Label("PSI.Settings.IconOpacityAndColor.OpacityCritical".Translate());
+            PSI.Settings.IconOpacityCritical = listing.Slider(PSI.Settings.IconOpacityCritical, 0f, 1f);
 
-            listing.DoLabelCheckbox("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
-            listing.DoGap();
+            listing.CheckboxLabeled("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
+            listing.Gap();
 
             colorRedAlert = colorInput.Value;
 
@@ -335,7 +335,7 @@ namespace PSI
           //listing.DoGap();
 
 
-            listing.DoLabel("Custom color settings coming from CCL in future");
+            listing.Label("Custom color settings coming from CCL in future");
 
             //  if (listing.DoTextButton("PSI.Settings.ReturnButton".Translate()))
             //      Page = "main";
@@ -344,51 +344,51 @@ namespace PSI
         private void FillPageShowHide(Listing_Standard listing, float columnwidth)
         {
 
-            listing.OverrideColumnWidth = columnwidth;
+            listing.ColumnWidth = columnwidth;
             DoHeading(listing, "PSI.Settings.Visibility.Header");
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.TargetPoint".Translate(), ref PSI.Settings.ShowTargetPoint);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Aggressive".Translate(), ref PSI.Settings.ShowAggressive);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Dazed".Translate(), ref PSI.Settings.ShowDazed);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Leave".Translate(), ref PSI.Settings.ShowLeave);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Draft".Translate(), ref PSI.Settings.ShowDraft);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.TargetPoint".Translate(), ref PSI.Settings.ShowTargetPoint);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Aggressive".Translate(), ref PSI.Settings.ShowAggressive);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Dazed".Translate(), ref PSI.Settings.ShowDazed);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Leave".Translate(), ref PSI.Settings.ShowLeave);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Draft".Translate(), ref PSI.Settings.ShowDraft);
             //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Idle".Translate(), ref PSI.Settings.ShowIdle);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Unarmed".Translate(), ref PSI.Settings.ShowUnarmed);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Hungry".Translate(), ref PSI.Settings.ShowHungry);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Sad".Translate(), ref PSI.Settings.ShowSad);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Tired".Translate(), ref PSI.Settings.ShowTired);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Idle".Translate(), ref PSI.Settings.ShowIdle);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Unarmed".Translate(), ref PSI.Settings.ShowUnarmed);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Hungry".Translate(), ref PSI.Settings.ShowHungry);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Sad".Translate(), ref PSI.Settings.ShowSad);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Tired".Translate(), ref PSI.Settings.ShowTired);
             //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Sickness".Translate(), ref PSI.Settings.ShowDisease);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Health".Translate(), ref PSI.Settings.ShowHealth);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Injury".Translate(), ref PSI.Settings.ShowEffectiveness);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Bloodloss".Translate(), ref PSI.Settings.ShowBloodloss);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Sickness".Translate(), ref PSI.Settings.ShowDisease);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Pain".Translate(), ref PSI.Settings.ShowPain);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Health".Translate(), ref PSI.Settings.ShowHealth);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Injury".Translate(), ref PSI.Settings.ShowEffectiveness);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Bloodloss".Translate(), ref PSI.Settings.ShowBloodloss);
             //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Hot".Translate(), ref PSI.Settings.ShowHot);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Cold".Translate(), ref PSI.Settings.ShowCold);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Naked".Translate(), ref PSI.Settings.ShowNaked);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Drunk".Translate(), ref PSI.Settings.ShowDrunk);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.ApparelHealth".Translate(), ref PSI.Settings.ShowApparelHealth);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Hot".Translate(), ref PSI.Settings.ShowHot);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Cold".Translate(), ref PSI.Settings.ShowCold);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Naked".Translate(), ref PSI.Settings.ShowNaked);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Drunk".Translate(), ref PSI.Settings.ShowDrunk);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.ApparelHealth".Translate(), ref PSI.Settings.ShowApparelHealth);
             //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Pacific".Translate(), ref PSI.Settings.ShowPacific);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.NightOwl".Translate(), ref PSI.Settings.ShowNightOwl);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Greedy".Translate(), ref PSI.Settings.ShowGreedy);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Jealous".Translate(), ref PSI.Settings.ShowJealous);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Lovers".Translate(), ref PSI.Settings.ShowLovers);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Pacific".Translate(), ref PSI.Settings.ShowPacific);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.NightOwl".Translate(), ref PSI.Settings.ShowNightOwl);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Greedy".Translate(), ref PSI.Settings.ShowGreedy);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Jealous".Translate(), ref PSI.Settings.ShowJealous);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Lovers".Translate(), ref PSI.Settings.ShowLovers);
             //
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Prosthophile".Translate(), ref PSI.Settings.ShowProsthophile);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Prosthophobe".Translate(), ref PSI.Settings.ShowProsthophobe);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
-            listing.DoLabelCheckbox("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Prosthophile".Translate(), ref PSI.Settings.ShowProsthophile);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Prosthophobe".Translate(), ref PSI.Settings.ShowProsthophobe);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
         }
 
         private void FillPageArrangement(Listing_Standard listing, float columnwidth)
         {
-            listing.OverrideColumnWidth = columnwidth;
+            listing.ColumnWidth = columnwidth;
 
             DoHeading(listing, "PSI.Settings.Arrangement.Header");
 
-            if (listing.DoTextButton("PSI.Settings.LoadPresetButton".Translate()))
+            if (listing.ButtonText("PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
                 var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Position/";
@@ -432,24 +432,24 @@ namespace PSI
             else if (num < 0)
                 num = 0;
 
-            listing.DoLabel("PSI.Settings.Arrangement.IconSize".Translate() + ("PSI.Settings.SizeLabel." + num).Translate());
-            PSI.Settings.IconSize = listing.DoSlider(PSI.Settings.IconSize, 0.5f, 2f);
+            listing.Label("PSI.Settings.Arrangement.IconSize".Translate() + ("PSI.Settings.SizeLabel." + num).Translate());
+            PSI.Settings.IconSize = listing.Slider(PSI.Settings.IconSize, 0.5f, 2f);
 
-            listing.DoLabel(string.Concat("PSI.Settings.Arrangement.IconPosition".Translate(), (int)(PSI.Settings.IconDistanceX * 100.0), " , ", (int)(PSI.Settings.IconDistanceY * 100.0)));
-            PSI.Settings.IconDistanceX = listing.DoSlider(PSI.Settings.IconDistanceX, -2f, 2f);
-            PSI.Settings.IconDistanceY = listing.DoSlider(PSI.Settings.IconDistanceY, -2f, 2f);
+            listing.Label(string.Concat("PSI.Settings.Arrangement.IconPosition".Translate(), (int)(PSI.Settings.IconDistanceX * 100.0), " , ", (int)(PSI.Settings.IconDistanceY * 100.0)));
+            PSI.Settings.IconDistanceX = listing.Slider(PSI.Settings.IconDistanceX, -2f, 2f);
+            PSI.Settings.IconDistanceY = listing.Slider(PSI.Settings.IconDistanceY, -2f, 2f);
 
-            listing.DoLabel(string.Concat("PSI.Settings.Arrangement.IconOffset".Translate(), (int)(PSI.Settings.IconOffsetX * 100.0), " , ", (int)(PSI.Settings.IconOffsetY * 100.0)));
-            PSI.Settings.IconOffsetX = listing.DoSlider(PSI.Settings.IconOffsetX, -2f, 2f);
-            PSI.Settings.IconOffsetY = listing.DoSlider(PSI.Settings.IconOffsetY, -2f, 2f);
+            listing.Label(string.Concat("PSI.Settings.Arrangement.IconOffset".Translate(), (int)(PSI.Settings.IconOffsetX * 100.0), " , ", (int)(PSI.Settings.IconOffsetY * 100.0)));
+            PSI.Settings.IconOffsetX = listing.Slider(PSI.Settings.IconOffsetX, -2f, 2f);
+            PSI.Settings.IconOffsetY = listing.Slider(PSI.Settings.IconOffsetY, -2f, 2f);
 
-            listing.DoLabelCheckbox("PSI.Settings.Arrangement.Horizontal".Translate(), ref PSI.Settings.IconsHorizontal);
+            listing.CheckboxLabeled("PSI.Settings.Arrangement.Horizontal".Translate(), ref PSI.Settings.IconsHorizontal);
 
-            listing.DoLabelCheckbox("PSI.Settings.Arrangement.ScreenScale".Translate(), ref PSI.Settings.IconsScreenScale);
+            listing.CheckboxLabeled("PSI.Settings.Arrangement.ScreenScale".Translate(), ref PSI.Settings.IconsScreenScale);
 
-            listing.DoLabel("PSI.Settings.Arrangement.IconsPerColumn".Translate() + PSI.Settings.IconsInColumn);
+            listing.Label("PSI.Settings.Arrangement.IconsPerColumn".Translate() + PSI.Settings.IconsInColumn);
 
-            PSI.Settings.IconsInColumn = (int)listing.DoSlider(PSI.Settings.IconsInColumn, 1f, 7f);
+            PSI.Settings.IconsInColumn = (int)listing.Slider(PSI.Settings.IconsInColumn, 1f, 7f);
 
             PSI.SaveSettings();
             PSI.Reinit();
