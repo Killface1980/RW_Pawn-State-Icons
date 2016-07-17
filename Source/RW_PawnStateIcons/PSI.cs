@@ -14,13 +14,11 @@ namespace PSI
     {
         private static double _fDelta;
 
-        private static bool _inGame;
+ //       private static bool _inGame;
 
         private static Dictionary<Pawn, PawnStats> _statsDict = new Dictionary<Pawn, PawnStats>();
 
         private static bool _iconsEnabled = true;
-
-        //     private static Dialog_Settings _settingsDialog = new Dialog_Settings();
 
         public static ModSettings Settings = new ModSettings();
 
@@ -42,10 +40,6 @@ namespace PSI
 
         public static void Reinit(bool reloadSettings = true, bool reloadIconSet = true, bool recalcIconPos = true)
         {
-
-
-
-
             _pawnCapacities = new[]
             {
                 PawnCapacityDefOf.BloodFiltration,
@@ -68,15 +62,15 @@ namespace PSI
 
             if (reloadIconSet)
             {
-                LongEventHandler.ExecuteWhenFinished( () =>
-                {
-                    Materials = new Materials(Settings.IconSet);
-                    ModSettings modSettings =
-                        XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
-                    Settings.IconSizeMult = modSettings.IconSizeMult;
-                    Materials.ReloadTextures(true);
-                    Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
-                } );
+                LongEventHandler.ExecuteWhenFinished(() =>
+               {
+                   Materials = new Materials(Settings.IconSet);
+                   ModSettings modSettings =
+                       XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                   Settings.IconSizeMult = modSettings.IconSizeMult;
+                   Materials.ReloadTextures(true);
+                   Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+               });
             }
 
         }
@@ -103,6 +97,7 @@ namespace PSI
 
         public virtual void OnGUI()
         {
+
             //    if (_inGame && Find.TickManager.Paused)
             //        UpdateOptionsDialog();
             //
@@ -113,7 +108,9 @@ namespace PSI
             //         UpdateOptionsDialog();
 
 
-            if (!_iconsEnabled || !_inGame)
+
+  //          if (!_iconsEnabled || !_inGame)
+            if (!_iconsEnabled)
                 return;
 
             foreach (Pawn pawn in Find.Map.mapPawns.AllPawns)
@@ -131,8 +128,8 @@ namespace PSI
 
         public virtual void Update()
         {
-            if (!_inGame)
-                return;
+   //       if (!_inGame)
+   //           return;
             if (Input.GetKeyUp(KeyCode.F11))
             {
                 _iconsEnabled = !_iconsEnabled;
@@ -147,34 +144,34 @@ namespace PSI
         {
             Material material = Materials[icon];
             if (material == null)
-                return;
-            LongEventHandler.ExecuteWhenFinished(() =>
             {
-                material.color = color;
-                Color guiColor = GUI.color;
-                GUI.color = color;
-                Vector2 vector2;
+                Debug.LogError("Material = null.");
+                return;
+            }
+            material.color = color;
+            Color guiColor = GUI.color;
+            GUI.color = color;
+            Vector2 vector2;
 
-                if (Settings.IconsScreenScale)
-                {
-                    vector2 = bodyPos.ToScreenPosition();
-                    vector2.x += posOffset.x * 45f;
-                    vector2.y -= posOffset.z * 45f;
-                }
-                else
-                    vector2 = (bodyPos + posOffset).ToScreenPosition();
+            if (Settings.IconsScreenScale)
+            {
+                vector2 = bodyPos.ToScreenPosition();
+                vector2.x += posOffset.x * 45f;
+                vector2.y -= posOffset.z * 45f;
+            }
+            else
+                vector2 = (bodyPos + posOffset).ToScreenPosition();
 
-                float wordscale = _worldScale;
+            float wordscale = _worldScale;
 
-                if (Settings.IconsScreenScale)
-                    wordscale = 45f;
-                float num2 = wordscale * (Settings.IconSizeMult * 0.5f);
-                Rect position = new Rect(vector2.x, vector2.y, num2 * Settings.IconSize, num2 * Settings.IconSize);
-                position.x -= position.width * 0.5f;
-                position.y -= position.height * 0.5f;
-                GUI.DrawTexture(position, material.mainTexture, ScaleMode.ScaleToFit, true);
-                GUI.color = guiColor;
-            });
+            if (Settings.IconsScreenScale)
+                wordscale = 45f;
+            float num2 = wordscale * (Settings.IconSizeMult * 0.5f);
+            Rect position = new Rect(vector2.x, vector2.y, num2 * Settings.IconSize, num2 * Settings.IconSize);
+            position.x -= position.width * 0.5f;
+            position.y -= position.height * 0.5f;
+            GUI.DrawTexture(position, material.mainTexture, ScaleMode.ScaleToFit, true);
+            GUI.color = guiColor;
         }
 
         private static void DrawIcon(Vector3 bodyPos, int num, Icons icon, Color color)
@@ -560,7 +557,7 @@ namespace PSI
         public static bool HasMood(Pawn pawn, Thought tdef)
         {
             if (pawn.needs.mood.thoughts.Thoughts.Contains(tdef))
-   //             if (pawn.needs.mood.thoughts.DistinctThoughtDefs.Contains(tdef))
+            //             if (pawn.needs.mood.thoughts.DistinctThoughtDefs.Contains(tdef))
             {
                 return true;
             }
@@ -574,9 +571,10 @@ namespace PSI
             if (_fDelta < 0.1)
                 return;
             _fDelta = 0.0;
-            _inGame = GameObject.Find("CameraMap");
+            //    _inGame = GameObject.Find("CameraDriver");
 
-            if (!_inGame || !_iconsEnabled)
+     //       if (!_inGame || !_iconsEnabled)
+                if (!_iconsEnabled)
                 return;
 
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
@@ -729,14 +727,14 @@ namespace PSI
                 // Berserk
                 if (Settings.ShowAggressive && pawnStats.MentalSanity == MentalStateDefOf.Berserk)
                     DrawIcon(bodyLoc, iconNum++, Icons.Aggressive, colorRedAlert);
-/*
-                // Binging on alcohol - needs refinement
-                if (Settings.ShowDrunk)
-                {
-                    if (pawnStats.MentalSanity == MentalStateDefOf.BingingAlcohol)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Drunk, colorRedAlert);
-                }
-                */
+                /*
+                                // Binging on alcohol - needs refinement
+                                if (Settings.ShowDrunk)
+                                {
+                                    if (pawnStats.MentalSanity == MentalStateDefOf.BingingAlcohol)
+                                        DrawIcon(bodyLoc, iconNum++, Icons.Drunk, colorRedAlert);
+                                }
+                                */
                 // Give Up Exit
                 if (Settings.ShowLeave && pawnStats.MentalSanity == MentalStateDefOf.PanicFlee) // was GiveUpExit
                     DrawIcon(bodyLoc, iconNum++, Icons.Leave, colorRedAlert);
