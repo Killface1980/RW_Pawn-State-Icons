@@ -3,3 +3,6 @@ C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnS
 C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\bin\Debug\RW_PawnStateIcons.pdb
 C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.dll
 C:\Users\Killface\Desktop\RimWorld1135Win\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.pdb
+C:\Program Files (x86)\Steam\SteamApps\common\RimWorld\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.csprojResolveAssemblyReference.cache
+C:\Program Files (x86)\Steam\SteamApps\common\RimWorld\Mods\RW_PawnStateIcons\Source\RW_PawnStateIcons\obj\Debug\RW_PawnStateIcons.dll
+C:\Program Files (x86)\Steam\SteamApps\common\RimWorld\Mods\RW_PawnStateIcons\Assemblies\RW_PawnStateIcons.dll
