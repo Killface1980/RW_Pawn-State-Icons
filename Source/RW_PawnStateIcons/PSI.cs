@@ -7,6 +7,7 @@ using Verse;
 using Verse.AI;
 using System.Linq;
 
+
 namespace PSI
 {
 
@@ -14,7 +15,7 @@ namespace PSI
     {
         private static double _fDelta;
 
- //       private static bool _inGame;
+        //       private static bool _inGame;
 
         private static Dictionary<Pawn, PawnStats> _statsDict = new Dictionary<Pawn, PawnStats>();
 
@@ -109,7 +110,7 @@ namespace PSI
 
 
 
-  //          if (!_iconsEnabled || !_inGame)
+            //          if (!_iconsEnabled || !_inGame)
             if (!_iconsEnabled)
                 return;
 
@@ -128,8 +129,8 @@ namespace PSI
 
         public virtual void Update()
         {
-   //       if (!_inGame)
-   //           return;
+            //       if (!_inGame)
+            //           return;
             if (Input.GetKeyUp(KeyCode.F11))
             {
                 _iconsEnabled = !_iconsEnabled;
@@ -554,14 +555,9 @@ namespace PSI
             _statsDict[colonist] = pawnStats;
         }
 
-        public static bool HasMood(Pawn pawn, Thought tdef)
+        public static bool HasMood(Pawn pawn, ThoughtDef tdef)
         {
-            if (pawn.needs.mood.thoughts.Thoughts.Contains(tdef))
-            //             if (pawn.needs.mood.thoughts.DistinctThoughtDefs.Contains(tdef))
-            {
-                return true;
-            }
-            return false;
+            return pawn.needs.mood.thoughts.Thoughts.Any((thought) => thought.def == tdef);
         }
 
         public virtual void FixedUpdate()
@@ -573,8 +569,8 @@ namespace PSI
             _fDelta = 0.0;
             //    _inGame = GameObject.Find("CameraDriver");
 
-     //       if (!_inGame || !_iconsEnabled)
-                if (!_iconsEnabled)
+            //       if (!_inGame || !_iconsEnabled)
+            if (!_iconsEnabled)
                 return;
 
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
@@ -886,7 +882,7 @@ namespace PSI
 
 
             // Usage of bed ...
-            if (Settings.ShowLovers && HasMood(colonist, new Thought_WantToSleepWithSpouseOrLover()))
+            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("WantToSleepWithSpouseOrLover")))
             {
                 DrawIcon(bodyLoc, iconNum++, Icons.Love, colorYellowAlert);
             }
@@ -896,9 +892,9 @@ namespace PSI
             //        DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
             //    }
 
-            /*
+            
 
-            if (Settings.ShowLovers && HasMood(colonist, GotMarried))
+            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotMarried")))
             {
                 DrawIcon(bodyLoc, iconNum++, Icons.Marriage, colorMoodBoost);
             }
@@ -1113,12 +1109,12 @@ namespace PSI
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
-                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStranger")))
+                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathNonAlly")))
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
 
-                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathStrangerBloodlust")))
+                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathBloodlust")))
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
                 }
@@ -1148,7 +1144,7 @@ namespace PSI
                         DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorOrangeAlert);
                 }
             }
-            */
+            
         }
 
         #endregion
