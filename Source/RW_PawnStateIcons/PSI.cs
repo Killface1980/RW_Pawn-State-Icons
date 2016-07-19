@@ -478,15 +478,12 @@ namespace PSI
             pawnStats.ApparelHealth = worstApparel;
 
             // Bleed rate
-
-
             if (colonist.health?.hediffSet != null)
                 pawnStats.BleedRate = Mathf.Clamp01(colonist.health.hediffSet.BleedingRate * Settings.LimitBleedMult);
 
 
             // Bed status
             if (colonist.ownership.OwnedBed != null)
-                //    if (colonist.ownership.OwnedBed.SleepingSlotsCount >= 1)
                 pawnStats.HasBed = true;
             if (colonist.ownership.OwnedBed == null)
             {
@@ -1131,16 +1128,19 @@ namespace PSI
 
                 #endregion
 
-                //non family
+                //Memory misc
                 if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathAlly")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
                 }
                 if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathNonAlly")))
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
-
+                if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathFamily")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                }
                 if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathBloodlust")))
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
@@ -1149,13 +1149,6 @@ namespace PSI
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
                 }
-
-
-
-                //    if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
-                //    {
-                //        DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
-                //    }
 
                 // Crowded missing since A14?
 
