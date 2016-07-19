@@ -380,6 +380,9 @@ namespace PSI
             listing.CheckboxLabeled("PSI.Settings.Visibility.Prosthophobe".Translate(), ref PSI.Settings.ShowProsthophobe);
             listing.CheckboxLabeled("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
             listing.CheckboxLabeled("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
+
+
+            listing.CheckboxLabeled("PSI.Settings.Visibility.Pyromaniac".Translate(), ref PSI.Settings.ShowPyromaniac);
         }
 
         private void FillPageArrangement(Listing_Standard listing, float columnwidth)

@@ -45,6 +45,7 @@ namespace PSI
         Marriage,
         TargetHair,
         TargetSkin,
+        Pyromaniac,
         Length
     }
 

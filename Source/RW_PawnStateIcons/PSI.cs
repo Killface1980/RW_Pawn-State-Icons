@@ -15,7 +15,7 @@ namespace PSI
     {
         private static double _fDelta;
 
-        //       private static bool _inGame;
+        private static bool _inGame;
 
         private static Dictionary<Pawn, PawnStats> _statsDict = new Dictionary<Pawn, PawnStats>();
 
@@ -109,14 +109,15 @@ namespace PSI
             //         UpdateOptionsDialog();
 
 
-
-            //          if (!_iconsEnabled || !_inGame)
-            if (!_iconsEnabled)
+            _inGame = GameObject.Find("ReverbZoneDummy");
+            if (!_iconsEnabled || !_inGame)
+                //  if (!_iconsEnabled)
                 return;
 
-            foreach (Pawn pawn in Find.Map.mapPawns.AllPawns)
+            foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned)
             {
                 if (pawn?.RaceProps == null) continue;
+
 
                 if (pawn.RaceProps.Animal)
                     DrawAnimalIcons(pawn);
@@ -497,9 +498,9 @@ namespace PSI
                 pawnStats.IsSick = colonist.health.hediffSet.AnyHediffMakesSickThought;
 
 
-            pawnStats.CrowdedMoodLevel = 0;
+            pawnStats.CrowdedMoodLevel = -1;
 
-            pawnStats.PainMoodLevel = 0;
+            pawnStats.PainMoodLevel = -1;
 
             // Moods
 
@@ -511,43 +512,20 @@ namespace PSI
                     Thought thoughtDef = colonist.needs.mood.thoughts.Thoughts[i];
                     if (thoughtDef.CurStage != null)
                     {
-                        ThoughtStage thoughtStage = thoughtDef.CurStage;
-
                         if (thoughtDef.def.defName.Equals("Crowded"))
                         {
-                            if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
-                            {
-                                pawnStats.CrowdedMoodLevel = 1;
-                            }
-                            else if (thoughtStage.baseMoodEffect < -11.5f && thoughtStage.baseMoodEffect > -12.5f)
-                            {
-                                pawnStats.CrowdedMoodLevel = 2;
-                            }
-                            else if (thoughtStage.baseMoodEffect < -19.5f && thoughtStage.baseMoodEffect > -20.5f)
-                            {
-                                pawnStats.CrowdedMoodLevel = 3;
-                            }
+                            pawnStats.CrowdedMoodLevel = thoughtDef.CurStageIndex;
                         }
-
-                        if (thoughtDef.def.defName.Equals("Pain"))
+                        else
                         {
-                            if (thoughtStage.baseMoodEffect < 0f && thoughtStage.baseMoodEffect > -5.5f)
-                            {
-                                pawnStats.PainMoodLevel = 1;
-                            }
-                            if (thoughtStage.baseMoodEffect < -9.5f && thoughtStage.baseMoodEffect > -10.5f)
-                            {
-                                pawnStats.PainMoodLevel = 2;
-                            }
-                            if (thoughtStage.baseMoodEffect < -14.5f && thoughtStage.baseMoodEffect > -15.5f)
-                            {
-                                pawnStats.PainMoodLevel = 3;
-                            }
-                            if (thoughtStage.baseMoodEffect < -19.5f)
-                            {
-                                pawnStats.PainMoodLevel = 4;
-                            }
+                            pawnStats.CrowdedMoodLevel = -1;
                         }
+                        if (thoughtDef.def.defName.Equals("Pain") || thoughtDef.def.defName.Equals("MasochistPain"))
+                        {
+                            pawnStats.PainMoodLevel = thoughtDef.CurStageIndex;
+
+                        }
+                        else pawnStats.PainMoodLevel = -1;
                     }
                 }
             }
@@ -567,10 +545,12 @@ namespace PSI
             if (_fDelta < 0.1)
                 return;
             _fDelta = 0.0;
-            //    _inGame = GameObject.Find("CameraDriver");
+            _inGame = GameObject.Find("ReverbZoneDummy");
 
-            //       if (!_inGame || !_iconsEnabled)
-            if (!_iconsEnabled)
+            if (!_inGame || !_iconsEnabled)
+                return;
+
+            if (!Find.Map.mapPawns.AllPawns.Any())
                 return;
 
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
@@ -816,17 +796,32 @@ namespace PSI
 
             // Pain
 
-            if (Settings.ShowPain && pawnStats.PainMoodLevel != 0)
+            if (Settings.ShowPain)
             {
-                // pain is always worse, +5 to the icon color
-                if (pawnStats.PainMoodLevel == 1)
-                    DrawIcon(bodyLoc, iconNum++, Icons.Pain, color10To06);
-                if (pawnStats.PainMoodLevel == 2)
-                    DrawIcon(bodyLoc, iconNum++, Icons.Pain, color15To11);
-                if (pawnStats.PainMoodLevel == 3)
-                    DrawIcon(bodyLoc, iconNum++, Icons.Pain, color20To16);
-                if (pawnStats.PainMoodLevel == 4)
-                    DrawIcon(bodyLoc, iconNum++, Icons.Pain, color25To21);
+                if (colonist.story.traits.HasTrait(TraitDef.Named("Masochist")))
+                {
+                    if (pawnStats.PainMoodLevel == 0)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost *0.4f);
+                    if (pawnStats.PainMoodLevel == 1)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost *0.6f);
+                    if (pawnStats.PainMoodLevel == 2)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost *0.8f);
+                    if (pawnStats.PainMoodLevel == 3)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost);
+                }
+                else
+                {
+                    // pain is always worse, +5 to the icon color
+                    if (pawnStats.PainMoodLevel == 0)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, color10To06);
+                    if (pawnStats.PainMoodLevel == 1)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, color15To11);
+                    if (pawnStats.PainMoodLevel == 2)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, color20To16);
+                    if (pawnStats.PainMoodLevel == 3)
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, color25To21);
+                }
+
             }
 
             if (Settings.ShowDisease)
@@ -875,6 +870,10 @@ namespace PSI
                     DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot - 1f, colorOrangeAlert, colorRedAlert);
             }
 
+            // Trait Pyromaniac
+            if (Settings.ShowPyromaniac && colonist.story.traits.HasTrait(TraitDef.Named("Pyromaniac")))
+                DrawIcon(bodyLoc, iconNum++, Icons.Pyromaniac, colorYellowAlert);
+
 
             // Bed status
             if (Settings.ShowBedroom && !pawnStats.HasBed)
@@ -892,16 +891,21 @@ namespace PSI
             //        DrawIcon(bodyLoc, iconNum++, Icons.Love, colorMoodBoost);
             //    }
 
-            
+
 
             if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("GotMarried")))
             {
                 DrawIcon(bodyLoc, iconNum++, Icons.Marriage, colorMoodBoost);
             }
 
-            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("AttendedWedding")))
+            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("HoneymoonPhase")))
             {
                 DrawIcon(bodyLoc, iconNum++, Icons.Marriage, colorMoodBoost / 2);
+            }
+
+            if (Settings.ShowLovers && HasMood(colonist, ThoughtDef.Named("AttendedWedding")))
+            {
+                DrawIcon(bodyLoc, iconNum++, Icons.Marriage, colorMoodBoost / 4);
             }
 
             // Naked
@@ -967,6 +971,64 @@ namespace PSI
                 // Close Family & friends / 25
 
 
+
+
+
+                //
+
+
+
+
+                // not family, more whiter icon
+                if (HasMood(colonist, ThoughtDef.Named("KilledColonist")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("KilledColonyAnimal")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                }
+
+                #region DeathMemory
+                //Deathmemory
+                // some of those need staging - to do
+                if (HasMood(colonist, ThoughtDef.Named("KnowGuestExecuted")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("KnowColonistExecuted")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("KnowPrisonerDiedInnocent")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                }
+                if (HasMood(colonist, ThoughtDef.Named("KnowColonistDied")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                }
+                //Bonded animal died
+                if (HasMood(colonist, ThoughtDef.Named("BondedAnimalDied")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                }
+                // Friend / rival died
+                if (HasMood(colonist, ThoughtDef.Named("PawnWithGoodOpinionDied")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("PawnWithBadOpinionDied")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
+                }
+
+                #endregion
+
+                #region DeathMemoryFamily
+
                 if (HasMood(colonist, ThoughtDef.Named("MySonDied")))
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
@@ -977,43 +1039,30 @@ namespace PSI
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
                 }
 
-                if (HasMood(colonist, ThoughtDef.Named("MyFianceDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
-                }
-
-                if (HasMood(colonist, ThoughtDef.Named("MyFianceeDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
-                }
-
-                if (HasMood(colonist, ThoughtDef.Named("MyLoverDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
-                }
-
-                // 20
-
                 if (HasMood(colonist, ThoughtDef.Named("MyHusbandDied")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color20To16);
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyWifeDied")))
                 {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color25To21);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyFianceDied")))
+                {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color20To16);
                 }
 
-                //
-
-                //
-                //friend depends on social
-                if (HasMood(colonist, ThoughtDef.Named("PawnWithGoodOpinionDied")))
+                if (HasMood(colonist, ThoughtDef.Named("MyFianceeDied")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color20To16);
                 }
 
-                // Notsoclose family / 15
+                if (HasMood(colonist, ThoughtDef.Named("MyLoverDied")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color20To16);
+                }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyBrotherDied")))
                 {
@@ -1044,49 +1093,30 @@ namespace PSI
 
                 if (HasMood(colonist, ThoughtDef.Named("MyNieceDied")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyNephewDied")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
+                }
+
+                if (HasMood(colonist, ThoughtDef.Named("MyHalfSiblingDied")))
+                {
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyAuntDied")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
+                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
 
                 if (HasMood(colonist, ThoughtDef.Named("MyUncleDied")))
                 {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color10To06);
-                }
-
-                //
-
-
-                if (HasMood(colonist, ThoughtDef.Named("BondedAnimalDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color15To11);
-                }
-
-                // not family, more whiter icon
-                if (HasMood(colonist, ThoughtDef.Named("KilledColonist")))
-                {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
 
-                if (HasMood(colonist, ThoughtDef.Named("KilledColonyAnimal")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
-                }
-
-                //Everyone else / < 10
                 if (HasMood(colonist, ThoughtDef.Named("MyGrandparentDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
-                }
-                if (HasMood(colonist, ThoughtDef.Named("MyHalfSiblingDied")))
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
@@ -1099,10 +1129,8 @@ namespace PSI
                 {
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
                 }
-                if (HasMood(colonist, ThoughtDef.Named("MyGrandparentDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, color05AndLess);
-                }
+
+                #endregion
 
                 //non family
                 if (HasMood(colonist, ThoughtDef.Named("WitnessedDeathAlly")))
@@ -1123,28 +1151,26 @@ namespace PSI
                     DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
                 }
 
-                //Haters
-                if (HasMood(colonist, ThoughtDef.Named("PawnWithBadOpinionDied")))
-                {
-                    DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
-                }
+
 
                 //    if (HasMood(colonist, ThoughtDef.Named("KilledMajorColonyEnemy")))
                 //    {
                 //        DrawIcon(bodyLoc, iconNum++, Icons.DeadColonist, colorMoodBoost);
                 //    }
 
+                // Crowded missing since A14?
+
                 if (Settings.ShowRoomStatus && pawnStats.CrowdedMoodLevel != 0)
                 {
-                    if (pawnStats.CrowdedMoodLevel == 1)
+                    if (pawnStats.CrowdedMoodLevel == 0)
                         DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorNeutralStatusFade);
-                    if (pawnStats.CrowdedMoodLevel == 2)
+                    if (pawnStats.CrowdedMoodLevel == 1)
                         DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorYellowAlert);
-                    if (pawnStats.CrowdedMoodLevel == 3)
+                    if (pawnStats.CrowdedMoodLevel == 2)
                         DrawIcon(bodyLoc, iconNum++, Icons.Crowded, colorOrangeAlert);
                 }
             }
-            
+
         }
 
         #endregion

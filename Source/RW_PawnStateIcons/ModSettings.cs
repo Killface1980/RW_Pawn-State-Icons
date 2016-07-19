@@ -47,6 +47,7 @@ namespace PSI
         public bool ShowPain = true;
         public bool ShowBedroom = true;
         public bool ShowHealth = true;
+        public bool ShowPyromaniac = true;
 
         public float LimitMoodLess = 0.25f;
         public float LimitFoodLess = 0.25f;
