@@ -741,6 +741,9 @@ namespace PSI
                 else if (Settings.ShowUnarmed && colonist.equipment.Primary == null && !colonist.IsPrisonerOfColony)
                     DrawIcon(bodyLoc, iconNum++, Icons.Unarmed, colorNeutralStatus);
             }
+            // Trait Pyromaniac
+            if (Settings.ShowPyromaniac && colonist.story.traits.HasTrait(TraitDef.Named("Pyromaniac")))
+                DrawIcon(bodyLoc, iconNum++, Icons.Pyromaniac, colorYellowAlert);
 
             // Idle
             if (Settings.ShowIdle && colonist.mindState.IsIdle)
@@ -869,10 +872,6 @@ namespace PSI
                 else
                     DrawIcon_FadeFloatWithTwoColors(bodyLoc, iconNum++, Icons.Hot, pawnStats.TooHot - 1f, colorOrangeAlert, colorRedAlert);
             }
-
-            // Trait Pyromaniac
-            if (Settings.ShowPyromaniac && colonist.story.traits.HasTrait(TraitDef.Named("Pyromaniac")))
-                DrawIcon(bodyLoc, iconNum++, Icons.Pyromaniac, colorYellowAlert);
 
 
             // Bed status
