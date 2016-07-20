@@ -1,12 +1,8 @@
 ﻿using CommunityCoreLibrary;
 using CommunityCoreLibrary.UI;
-using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using CommunityCoreLibrary.MiniMap;
 using UnityEngine;
 using Verse;
 
@@ -30,8 +26,8 @@ namespace PSI
         {
             float curY = 0f;
 
-            inRect.xMin += 5f;
-            inRect.width -= 10f;
+            inRect.xMin += 15f;
+            inRect.width -= 15f;
 
             Rect headerRect = inRect;
             Rect headerRect2 = inRect;
@@ -40,7 +36,8 @@ namespace PSI
 
             //       DoHeading(listing, "Pawn State Icons", false);
 
-            headerListing.ColumnWidth = inRect.width / 2 - 10f;
+            headerListing.ColumnWidth = inRect.width;
+        //    headerListing.ColumnWidth = inRect.width / 2 - 10f;
 
             FillPageMain(headerListing);
 
@@ -51,7 +48,8 @@ namespace PSI
 
             headerRect2.yMin += curY;
             var listinghead = new Listing_Standard(headerRect2);
-            listinghead.ColumnWidth = headerListing.ColumnWidth;
+
+            listinghead.ColumnWidth = headerListing.ColumnWidth /2 -10f;
             FillPageMain2(listinghead);
 
             listinghead.End();
@@ -135,24 +133,26 @@ namespace PSI
 
         private void FillPageMain(Listing_Standard listing)
         {
-            if (listing.ButtonText("PSI.Settings.IconSet".Translate() + PSI.Settings.IconSet))
-            {
-                var options = new List<FloatMenuOption>();
-                foreach (var str in PSI.IconSets)
-                {
-                    var setname = str;
-                    options.Add(new FloatMenuOption(setname, () =>
-                    {
-                        PSI.Settings.IconSet = setname;
-                        PSI.Materials = new Materials(setname);
-                        PSI.Materials.ReloadTextures(true);
-                    }));
-                }
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-            listing.NewColumn();
+            //  if (listing.ButtonText("PSI.Settings.IconSet".Translate() + PSI.Settings.IconSet))
+            //   if (listing.ButtonTextLabeled("PSI.Settings.IconSet".Translate() , PSI.Settings.IconSet))
+            //   {
+            //       var options = new List<FloatMenuOption>();
+            //       foreach (var str in PSI.IconSets)
+            //       {
+            //           var setname = str;
+            //           options.Add(new FloatMenuOption(setname, () =>
+            //           {
+            //               PSI.Settings.IconSet = setname;
+            //               PSI.Materials = new Materials(setname);
+            //               PSI.Materials.ReloadTextures(true);
+            //           }));
+            //       }
+            //       Find.WindowStack.Add(new FloatMenu(options));
+            //   }
+            //   listing.NewColumn();
 
-            if (listing.ButtonText("PSI.Settings.LoadPresetButton".Translate()))
+            //    if (listing.ButtonTextLabeled("PSI.Settings.LoadPresetButton".Translate()))
+            if (listing.ButtonTextLabeled("PSI.Settings.IconSet".Translate() +  PSI.Settings.IconSet, "PSI.Settings.LoadPresetButton".Translate()))
             {
                 var strArray = new string[0];
                 var path = GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Presets/Complete/";

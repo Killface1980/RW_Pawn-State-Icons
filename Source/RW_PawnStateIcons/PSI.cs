@@ -70,7 +70,7 @@ namespace PSI
                        XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
                    Settings.IconSizeMult = modSettings.IconSizeMult;
                    Materials.ReloadTextures(true);
-                   Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                //   Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
                });
             }
 
@@ -117,7 +117,6 @@ namespace PSI
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned)
             {
                 if (pawn?.RaceProps == null) continue;
-
 
                 if (pawn.RaceProps.Animal)
                     DrawAnimalIcons(pawn);
