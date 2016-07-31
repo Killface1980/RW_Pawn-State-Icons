@@ -109,7 +109,13 @@ namespace PSI
             //         UpdateOptionsDialog();
 
 
-            _inGame = GameObject.Find("ReverbZoneDummy");
+            if (Find.Map.mapPawns.FreeColonistsAndPrisonersCount.Equals(0))
+            {
+                _inGame = false;
+                return;
+            }
+            _inGame = true;
+
             if (!_iconsEnabled || !_inGame)
                 //  if (!_iconsEnabled)
                 return;
@@ -129,8 +135,8 @@ namespace PSI
 
         public virtual void Update()
         {
-            //       if (!_inGame)
-            //           return;
+                   if (!_inGame)
+                       return;
             if (Input.GetKeyUp(KeyCode.F11))
             {
                 _iconsEnabled = !_iconsEnabled;
@@ -399,6 +405,10 @@ namespace PSI
             pawnStats.HasLifeThreateningDisease = false;
             pawnStats.HealthDisease = 1f;
 
+            // Sick thoughts
+            if (colonist.health?.hediffSet != null)
+                pawnStats.IsSick = colonist.health.hediffSet.AnyHediffMakesSickThought;
+
 
             if (pawnStats.IsSick && colonist.SelectableNow() && !colonist.Destroyed && colonist.playerSettings.medCare >= 0)
             {
@@ -408,56 +418,56 @@ namespace PSI
                     for (i = 0; i < colonist.health.hediffSet.hediffs.Count; i++)
                     {
                         Hediff hediff = colonist.health.hediffSet.hediffs[i];
-                        HediffWithComps hediffWithComps;
+               //         HediffWithComps hediffWithComps;
 
-                        if ((HediffWithComps)hediff != null)
-                            hediffWithComps = (HediffWithComps)hediff;
-                        else continue;
-
-                        if (hediffWithComps.IsOld()) continue;
+                //      if ((HediffWithComps)hediff != null)
+                //          hediffWithComps = (HediffWithComps)hediff;
+                //      else continue;
+                //
+                //      if (hediffWithComps.IsOld()) continue;
 
                         pawnStats.ToxicBuildUp = 0;
 
                         //pawnStats.ToxicBuildUp
-                        if (hediffWithComps.def.defName.Equals("ToxicBuildup"))
+                        if (hediff.def.defName.Equals("ToxicBuildup"))
                         {
-                            pawnStats.ToxicBuildUp = hediffWithComps.Severity;
+                            pawnStats.ToxicBuildUp = hediff.Severity;
                         }
 
-                        if (hediffWithComps.def.defName.Equals("WoundInfection") || hediffWithComps.def.defName.Equals("Flu") || hediffWithComps.def.defName.Equals("Plague") || hediffWithComps.def.defName.Equals("Malaria") || hediffWithComps.def.defName.Equals("SleepingSickness"))
+                        if (hediff.def.defName.Equals("WoundInfection") || hediff.def.defName.Equals("Flu") || hediff.def.defName.Equals("Plague") || hediff.def.defName.Equals("Malaria") || hediff.def.defName.Equals("SleepingSickness"))
                         {
-                            float severity = hediffWithComps.Severity;
-                            float immunity = colonist.health.immunity.GetImmunity(hediffWithComps.def);
+                            float severity = hediff.Severity;
+                            float immunity = colonist.health.immunity.GetImmunity(hediff.def);
                             float basehealth = pawnStats.HealthDisease - (severity - immunity / 4) - 0.25f;
                             pawnStats.HasLifeThreateningDisease = true;
                             pawnStats.HealthDisease = basehealth;
                         }
 
 
-                        if (!hediffWithComps.Visible) continue;
+                        if (!hediff.Visible) continue;
 
-                        if (!hediffWithComps.def.PossibleToDevelopImmunity()) continue;
+                        if (!hediff.def.PossibleToDevelopImmunity()) continue;
 
-                        if (hediffWithComps.CurStage == null) continue;
+                        if (hediff.CurStage == null) continue;
 
-                        if (!hediffWithComps.CurStage.everVisible) continue;
+                        if (!hediff.CurStage.everVisible) continue;
 
-                        if (hediffWithComps.FullyImmune()) continue;
+                        if (hediff.FullyImmune()) continue;
 
-                        if (hediffWithComps.def.naturallyHealed) continue;
+                        if (hediff.def.naturallyHealed) continue;
 
-                        if (!hediffWithComps.def.makesSickThought) continue;
+                        if (!hediff.def.makesSickThought) continue;
 
-                        if (!hediffWithComps.def.tendable) continue;
+                        if (!hediff.def.tendable) continue;
 
-                        if (Math.Abs(colonist.health.immunity.GetImmunity(hediffWithComps.def) - 1.0) < 0.05) continue;
+                        if (Math.Abs(colonist.health.immunity.GetImmunity(hediff.def) - 1.0) < 0.05) continue;
 
                         //
 
 
-                        if (pawnStats.DiseaseDisappearance > colonist.health.immunity.GetImmunity(hediffWithComps.def))
+                        if (pawnStats.DiseaseDisappearance > colonist.health.immunity.GetImmunity(hediff.def))
                         {
-                            pawnStats.DiseaseDisappearance = colonist.health.immunity.GetImmunity(hediffWithComps.def);
+                            pawnStats.DiseaseDisappearance = colonist.health.immunity.GetImmunity(hediff.def);
                         }
                     }
                 }
@@ -488,10 +498,6 @@ namespace PSI
             {
                 pawnStats.HasBed = false;
             }
-
-            // Sick thoughts
-            if (colonist.health?.hediffSet != null)
-                pawnStats.IsSick = colonist.health.hediffSet.AnyHediffMakesSickThought;
 
 
             pawnStats.CrowdedMoodLevel = -1;
@@ -541,27 +547,31 @@ namespace PSI
             if (_fDelta < 0.1)
                 return;
             _fDelta = 0.0;
-            _inGame = GameObject.Find("ReverbZoneDummy");
+
+            if (Find.Map.mapPawns.FreeColonistsAndPrisonersCount.Equals(0))
+            {
+                _inGame = false;
+                return;
+            }
+            _inGame = true;
 
             if (!_inGame || !_iconsEnabled)
                 return;
 
-            if (!Find.Map.mapPawns.AllPawns.Any())
-                return;
 
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
                                                                                //               foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned) //.FreeColonistsAndPrisoners)
             {
-                if (pawn.SelectableNow() && !pawn.Dead && !pawn.DestroyedOrNull() && pawn.Name.IsValid)
+                if (!pawn.SelectableNow() || pawn.Dead || pawn.DestroyedOrNull() || !pawn.Name.IsValid || pawn.Name == null) continue;
+                try
                 {
-                    try
-                    {
-                        UpdateColonistStats(pawn);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Notify_Exception(ex);
-                    }
+                    UpdateColonistStats(pawn);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log(ex);
+                    //Log.Notify_Exception(ex);
+
                 }
             }
         }

@@ -8,7 +8,7 @@ using Verse;
 
 namespace PSI
 {
-    public class ModConfigMenu : ModConfigurationMenu, IExposable
+    public class ModConfigMenu : ModConfigurationMenu
     {
         #region Fields
 
@@ -380,6 +380,8 @@ namespace PSI
             listing.CheckboxLabeled("PSI.Settings.Visibility.Prosthophobe".Translate(), ref PSI.Settings.ShowProsthophobe);
             listing.CheckboxLabeled("PSI.Settings.Visibility.RoomStatus".Translate(), ref PSI.Settings.ShowRoomStatus);
             listing.CheckboxLabeled("PSI.Settings.Visibility.Bedroom".Translate(), ref PSI.Settings.ShowBedroom);
+
+            listing.CheckboxLabeled("PSI.Settings.Visibility.ShowDeadColonists".Translate(), ref PSI.Settings.ShowDeadColonists);
 
 
             listing.CheckboxLabeled("PSI.Settings.Visibility.Pyromaniac".Translate(), ref PSI.Settings.ShowPyromaniac);

@@ -49,6 +49,8 @@
   <PSI.Settings.Visibility.Pacific>Pacific</PSI.Settings.Visibility.Pacific>
   <PSI.Settings.Visibility.ApparelHealth>Tatters</PSI.Settings.Visibility.ApparelHealth>
 
+  <PSI.Settings.Visibility.ShowDeadColonists>Show dead colonists</PSI.Settings.Visibility.ShowDeadColonists>
+
   <PSI.Settings.Sensitivity.Header>Sensitivity</PSI.Settings.Sensitivity.Header>
   <PSI.Settings.Sensitivity.Bleeding>Bleeding: </PSI.Settings.Sensitivity.Bleeding>
   <PSI.Settings.Sensitivity.Injured>Injured if Efficiency &lt; </PSI.Settings.Sensitivity.Injured>

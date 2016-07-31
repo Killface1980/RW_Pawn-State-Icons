@@ -11,7 +11,7 @@
     <AssemblyName>RW_PawnStateIcons</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -94,9 +94,11 @@
     </Content>
     <Content Include="..\..\Defs\ModHelperDef\ModHelperDef.xml">
       <Link>ModHelperDef.xml</Link>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="..\..\Defs\ThingDefs\Initializer.xml">
       <Link>Initializer.xml</Link>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="..\..\Languages\English\Keyed\IconMod.xml">
       <Link>Translations\EN\IconMod.xml</Link>
