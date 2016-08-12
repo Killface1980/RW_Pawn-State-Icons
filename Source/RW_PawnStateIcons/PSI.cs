@@ -15,8 +15,6 @@ namespace PSI
     {
         private static double _fDelta;
 
-        private static bool _inGame;
-
         private static Dictionary<Pawn, PawnStats> _statsDict = new Dictionary<Pawn, PawnStats>();
 
         private static bool _iconsEnabled = true;
@@ -109,18 +107,11 @@ namespace PSI
             //         UpdateOptionsDialog();
 
 
-            if (Find.Map.mapPawns.FreeColonistsAndPrisonersCount.Equals(0))
-            {
-                _inGame = false;
-                return;
-            }
-            _inGame = true;
-
-            if (!_iconsEnabled || !_inGame)
+            if (!_iconsEnabled)
                 //  if (!_iconsEnabled)
                 return;
 
-            foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned)
+            foreach (Pawn pawn in Find.Map.mapPawns.AllPawns)
             {
                 if (pawn?.RaceProps == null) continue;
 
@@ -135,8 +126,7 @@ namespace PSI
 
         public virtual void Update()
         {
-                   if (!_inGame)
-                       return;
+
             if (Input.GetKeyUp(KeyCode.F11))
             {
                 _iconsEnabled = !_iconsEnabled;
@@ -547,17 +537,6 @@ namespace PSI
             if (_fDelta < 0.1)
                 return;
             _fDelta = 0.0;
-
-            if (Find.Map.mapPawns.FreeColonistsAndPrisonersCount.Equals(0))
-            {
-                _inGame = false;
-                return;
-            }
-            _inGame = true;
-
-            if (!_inGame || !_iconsEnabled)
-                return;
-
 
             foreach (Pawn pawn in Find.Map.mapPawns.FreeColonistsAndPrisoners) //.FreeColonistsAndPrisoners)
                                                                                //               foreach (var colonist in Find.Map.mapPawns.FreeColonistsAndPrisonersSpawned) //.FreeColonistsAndPrisoners)

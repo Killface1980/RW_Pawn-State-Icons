@@ -55,7 +55,7 @@ namespace PSI
         public float LimitEfficiencyLess = 0.33f;
         public float LimitDiseaseLess = 1f;
         public float LimitBleedMult = 3f;
-        public float LimitApparelHealthLess = 0.33f;
+        public float LimitApparelHealthLess = 0.5f;
         public float LimitTempComfortOffset;
         public float IconOpacity = 0.7f;
         public float IconOpacityCritical = 0.6f;
