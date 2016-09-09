@@ -1,4 +1,5 @@
-﻿using CommunityCoreLibrary;
+﻿#if !NoCCL
+using CommunityCoreLibrary;
 using CommunityCoreLibrary.UI;
 using System;
 using System.Collections.Generic;
@@ -10,17 +11,17 @@ namespace PSI
 {
     public class ModConfigMenu : ModConfigurationMenu
     {
-        #region Fields
+#region Fields
 
         public static ModSettings baseSettings = new ModSettings();
 
-        public string Page = "main";
+        public string Page = "showhide";
         //       public bool CloseButtonClicked = true;
         public Window OptionsDialog;
 
-        #endregion
+#endregion
 
-        #region Methods
+#region Methods
 
         public override float DoWindowContents(Rect inRect)
         {
@@ -281,26 +282,6 @@ namespace PSI
             //  Page = "main";
         }
 
-        public LabeledInput_Color colorInput;
-
-        public Color colorRedAlert = PSI.Settings.ColorRedAlert;
-
-        public float DrawMCMRegion(Rect InRect)
-        {
-            Rect row = InRect;
-            row.height = 24f;
-
-            colorInput.Draw(row);
-            colorRedAlert = colorInput.Value;
-
-            return 30f;
-        }
-
-        public ModConfigMenu()
-        {
-            colorInput = new LabeledInput_Color(colorRedAlert, "MiniMap.ViewPort.Color".Translate(), "MiniMap.ViewPort.ColorTip".Translate());
-        }
-
         private void FillPageOpacityAndColor(Listing_Standard listing, float columnwidth)
         {
             listing.ColumnWidth = columnwidth;
@@ -315,7 +296,6 @@ namespace PSI
             listing.CheckboxLabeled("PSI.Settings.IconOpacityAndColor.UseColoredTarget".Translate(), ref PSI.Settings.UseColoredTarget);
             listing.Gap();
 
-            colorRedAlert = colorInput.Value;
 
           //if (listing.DoTextButton("PSI.Settings.ResetColors".Translate()))
           //{
@@ -470,7 +450,6 @@ namespace PSI
             PSI.SaveSettings();
             PSI.Reinit();
             //          CloseButtonClicked = true;
-            Scribe_Values.LookValue(ref colorRedAlert, "colorRedAlert");
 
             if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
@@ -478,6 +457,7 @@ namespace PSI
             }
         }
 
-        #endregion
+#endregion
     }
 }
+#endif

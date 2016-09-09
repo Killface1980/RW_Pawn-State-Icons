@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <CommunityCoreLibrary.ModHelperDef>
+        <defName>RW_PSI_ModHelperDef</defName>
+        <ModName>Pawn State Icons</ModName>
+        <minCCLVersion>0.14.0</minCCLVersion>
+        <ModConfigurationMenus> 
+            <li>
+                <label>Pawn State Icons</label>
+                <mcmClass>PSI.ModConfigMenu</mcmClass>
+            </li>
+        </ModConfigurationMenus>
+    </CommunityCoreLibrary.ModHelperDef>
+</Defs>

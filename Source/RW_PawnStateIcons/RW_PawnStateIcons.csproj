@@ -30,13 +30,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoCCL|AnyCPU'">
+    <OutputPath>..\..\Assemblies\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NoCCL</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\RimWorldWin_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Community Core Library">
-      <HintPath>..\..\..\Community Core Library\Assemblies\Community Core Library.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\workshop\content\294100\729577707\Assemblies\Community Core Library.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

@@ -68,7 +68,7 @@ namespace PSI
                        XmlLoader.ItemFromXmlFile<ModSettings>(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
                    Settings.IconSizeMult = modSettings.IconSizeMult;
                    Materials.ReloadTextures(true);
-                //   Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
+                   //   Log.Message(GenFilePaths.CoreModsFolderPath + "/RW_PawnStateIcons/Textures/UI/Overlays/PawnStateIcons/" + Settings.IconSet + "/iconset.cfg");
                });
             }
 
@@ -96,7 +96,6 @@ namespace PSI
 
         public virtual void OnGUI()
         {
-
             //    if (_inGame && Find.TickManager.Paused)
             //        UpdateOptionsDialog();
             //
@@ -106,6 +105,8 @@ namespace PSI
             //     if (!_inGame || Find.TickManager.Paused))
             //         UpdateOptionsDialog();
 
+            if (Current.ProgramState != ProgramState.MapPlaying)
+                return;
 
             if (!_iconsEnabled)
                 //  if (!_iconsEnabled)
@@ -113,7 +114,7 @@ namespace PSI
 
             foreach (Pawn pawn in Find.Map.mapPawns.AllPawns)
             {
-                if (pawn?.RaceProps == null) continue;
+                if (pawn != null && pawn.RaceProps == null) continue;
 
                 if (pawn.RaceProps.Animal)
                     DrawAnimalIcons(pawn);
@@ -408,13 +409,13 @@ namespace PSI
                     for (i = 0; i < colonist.health.hediffSet.hediffs.Count; i++)
                     {
                         Hediff hediff = colonist.health.hediffSet.hediffs[i];
-               //         HediffWithComps hediffWithComps;
+                        //         HediffWithComps hediffWithComps;
 
-                //      if ((HediffWithComps)hediff != null)
-                //          hediffWithComps = (HediffWithComps)hediff;
-                //      else continue;
-                //
-                //      if (hediffWithComps.IsOld()) continue;
+                        //      if ((HediffWithComps)hediff != null)
+                        //          hediffWithComps = (HediffWithComps)hediff;
+                        //      else continue;
+                        //
+                        //      if (hediffWithComps.IsOld()) continue;
 
                         pawnStats.ToxicBuildUp = 0;
 
@@ -532,6 +533,10 @@ namespace PSI
 
         public virtual void FixedUpdate()
         {
+            if (Current.ProgramState != ProgramState.MapPlaying)
+                return;
+
+
             _fDelta += Time.fixedDeltaTime;
 
             if (_fDelta < 0.1)
@@ -789,11 +794,11 @@ namespace PSI
                 if (colonist.story.traits.HasTrait(TraitDef.Named("Masochist")))
                 {
                     if (pawnStats.PainMoodLevel == 0)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost *0.4f);
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost * 0.4f);
                     if (pawnStats.PainMoodLevel == 1)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost *0.6f);
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost * 0.6f);
                     if (pawnStats.PainMoodLevel == 2)
-                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost *0.8f);
+                        DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost * 0.8f);
                     if (pawnStats.PainMoodLevel == 3)
                         DrawIcon(bodyLoc, iconNum++, Icons.Pain, colorMoodBoost);
                 }
